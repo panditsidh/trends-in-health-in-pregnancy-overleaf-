@@ -3,9 +3,14 @@
 
 if "`c(username)'" == "sidhpandit" {
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
-	global outpng "/Users/sidhpandit/Dropbox/trends in health in pregnancy/figures and tables/kdensities ages.png"
+	global out_dropbox "/Users/sidhpandit/Dropbox/trends in health in pregnancy/figures and tables/kdensities ages.png"
+	
+	global out_github"/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/figures/kdensities ages.png"
 	
 }
+
+
+use $ir_combined, clear
 
 
 gen preg_3moplus = (v213==1 & v214>=3)
@@ -22,14 +27,14 @@ foreach r of numlist 3/5 {
 	
 }
 
-
 #delimit ;
 twoway
 	(kdensity v012 [aw=wt] if round==3 & v213==1, bwidth(1.9) lcolor(blue) legend(label(1 "NFHS-3 (2005-2006)")))
 	(kdensity v012 [aw=wt] if round==4 & v213==1, bwidth(1.9) lcolor(green) legend(label(2 "NFHS-4 (2005-2006)")))
 	(kdensity v012 [aw=wt] if round==5 & v213==1, bwidth(1.9) lcolor(red) legend(label(3 "NFHS-5 (2005-2006)"))),
-	title("Kdensity of age by Survey Round") 
-	ytitle("Age")
+	xtitle("Age")
+	xtick(10(5)50)
+	ytitle("Proportion in sample")
 	legend(order(1 2 3) position(6) cols(3))
 	text(0.08 48 "Count of 3+mo preg. women:", placement(west) size(small))
 	text(0.075 48 " - NFHS-3: `n_preg3'", placement(west) size(small))
@@ -43,5 +48,6 @@ twoway
 
 graph display, xsize(15) ysize(10) 
 
+// graph export "$out_dropbox", as(png) name("Graph") replace
 
-graph export "$outpng", as(png) name("Graph") replace
+graph export "$out_github", as(png) name("Graph") replace

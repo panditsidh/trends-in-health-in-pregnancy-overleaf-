@@ -3,7 +3,8 @@
 
 if "`c(username)'" == "sidhpandit" {
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
-	global out "/Users/sidhpandit/Dropbox/trends in health in pregnancy/figures and tables/cdf prepregnancy bmi.png"
+	global out_dropbox "/Users/sidhpandit/Dropbox/trends in health in pregnancy/figures and tables/cdf prepregnancy bmi.png"
+	global out_github "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/figures/cdf prepregnancy bmi.png"
 	
 }
 
@@ -34,9 +35,8 @@ foreach r of numlist 3/5 {
 #delimit ;
 twoway 
   (line cdf bmi if round == 3 & v213==0, sort lpattern(solid) lcolor(blue) legend(label(1 "NFHS-3 (2005-2006)"))) 
-  (line cdf bmi if round == 4 & v213==0, sort lpattern(dash)  lcolor(green) legend(label(2 "NFHS-4 (2015-2016)"))) 
-  (line cdf bmi if round == 5 & v213==0, sort lpattern(dot)   lcolor(red) legend(label(3 "NFHS-5 (2019-2021)"))),
-  title("CDF of Pre-pregnancy BMI by Survey Round") 
+  (line cdf bmi if round == 4 & v213==0, sort lpattern(solid)  lcolor(green) legend(label(2 "NFHS-4 (2015-2016)"))) 
+  (line cdf bmi if round == 5 & v213==0, sort lpattern(solid)   lcolor(red) legend(label(3 "NFHS-5 (2019-2021)"))),
   xlabel(10(5)30) ylabel(0(0.1)1, format(%3.1f)) 
   xscale(range(10 30))
   legend(order(1 2 3)) 
@@ -44,7 +44,9 @@ twoway
   name(a, replace);
 #delimit cr
 
-graph export "$out", as(png) replace
+// graph export "$out_dropbox", as(png) replace
+
+graph export "$out_github", as(png) replace
 
 
 #delimit ;  

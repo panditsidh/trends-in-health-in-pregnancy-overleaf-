@@ -2,16 +2,19 @@
 
 if "`c(username)'" == "sidhpandit" {
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
-	global out "/Users/sidhpandit/Dropbox/trends in health in pregnancy/figures and tables/boxplots ages.png"
+	global out_dropbox "/Users/sidhpandit/Dropbox/trends in health in pregnancy/figures and tables/boxplots ages.png"
+	
+	global outtex_github "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/table of gestational duration.tex"
 	
 }
 
 use $ir_combined, clear
 
 
-table mopreg round if v213 == 1 [aw=v005], statistic(percent, across(mopreg))
+table mopreg round if v213 == 1 [aw=v005], statistic(percent, across(mopreg)) nototals
 
-table moperiod round if v213 == 1 [aw=v005], statistic(percent, across(moperiod))
+
+table moperiod round if v213 == 1 [aw=v005], statistic(percent, across(moperiod)) nototals
 
 
 

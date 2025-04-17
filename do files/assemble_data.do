@@ -380,6 +380,11 @@ gen round=5 if round5==1
 replace round=4 if round4==1
 replace round=3 if round3==1
 
+
+label define roundlbl 3 "NFHS-3 (2005-2006)" 4 "NFHS-4 (2015-2016)" 5 "NFHS-5 (2019-2021)"
+label values round roundlbl
+
+
 gen bmi = v445 if v445!=9998 & v445!= 9999
 replace bmi = bmi/100
 
