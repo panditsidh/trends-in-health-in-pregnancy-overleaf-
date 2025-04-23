@@ -11,7 +11,7 @@ if "`c(username)'" == "sidhpandit" {
 
 use $ir_combined, clear
 
-
+keep if v213==0
 
 eststo clear
 foreach r of numlist 3/5 {
@@ -27,11 +27,13 @@ foreach r of numlist 3/5 {
 }
 
 
+local labels `" "No living boy child" "No children" "'
+
 #delimit ;
 esttab round3 round4 round5 using $out_github, 
-    stats(no_boy no_child) 
+	replace
+    stats(no_boy no_child, labels(`labels')) 
     drop(v213 _cons)
     mtitle("NFHS-3 (2005–2006)" "NFHS-4 (2015–2016)" "NFHS-5 (2019–2021)") 
-    varlabels(no_boy "No living boy child" no_child "No children") 
     nonumber ;
 #delimit cr
