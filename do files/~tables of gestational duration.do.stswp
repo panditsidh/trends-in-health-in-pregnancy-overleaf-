@@ -4,7 +4,7 @@ if "`c(username)'" == "sidhpandit" {
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
 	global out_dropbox "/Users/sidhpandit/Dropbox/trends in health in pregnancy/figures and tables/boxplots ages.png"
 	
-	global outtex_github "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/table of gestational duration.tex"
+	global outtex_github "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/table_of_gestational_duration.tex"
 	
 }
 
@@ -76,7 +76,7 @@ foreach r of numlist 3/5 {
 
 
 #delimit ;
-esttab * using $out_github,
+esttab * using $outtex_github,
 	replace
 	stats(prop_1 prop_2 prop_3 prop_4 prop_5 prop_6 prop_7
 	prop_8 prop_9 prop_10 prop_11)
