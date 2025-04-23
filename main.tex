@@ -1,5 +1,4 @@
 \documentclass{article}
-\documentclass[AER, draftmode]{AEA}
 \usepackage{graphicx} %package to manage images
 \graphicspath{ {./figures/} }
 \usepackage{hyperref}
@@ -22,20 +21,21 @@
 
 
 \title{trends in health in pregnancy (overleaf)}
-\author{Sidh Pandit}
+
 \date{April 2025}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
 
 
+TODO
+- add short note after each figure/table and about how it was generated
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/cdf prepregnancy bmi.png}
-    \caption{: testing the caption feature}
+    \caption{: CDFs of Estimated Pre-Pregnancy BMI in NFHS 3, 4, \& 5}
     
 \end{figure}
 
@@ -44,7 +44,7 @@
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/cdf nine months bmi.png}
-    \caption{: testing the caption feature}
+    \caption{: CDFs of Observed BMI at 9+ months pregnant in NFHS 3, 4, \& 5}
     
 \end{figure}
 
@@ -52,21 +52,70 @@
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/kdensities ages.png}
-    \caption{: testing the caption feature}
+    \caption{: Kernel density of the ages of currently pregnant women in NFHS 3, 4, \& 5}
 \end{figure}
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/boxplots ages.png}
-    \caption{: testing the caption feature}
+    \caption{: Box plots of the age distributions of currently pregnant women NFHS 3, 4, \& 5}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/bar graph number of children.png}
-    \caption{: testing the caption feature}
+    \caption{: Bar graph of number of living children among currently pregnant women in the NFHS 3, 4, \& 5}
 \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tables/table of gestational duration.png}
+    \caption{: Proportion of pregnant women by gestational duration in the NFHS 3, 4, \& 5}
+\end{figure}
+
+
+
+TODO:
+- total for all parities
+\begin{table}[H]
+    \centering
+    \caption{: Proportion of wanted pregnancies among pregnant women by parity in the NFHS 3, 4, \& 5}
+    \label{tab:sumstat}
+    \adjustbox{width=\textwidth}{\input{tables/pregnancies_wanted}}
+\end{table}
+
+
+TODO: 
+- make sure it's only non-pregnant women.
+\begin{table}[H]
+    \centering
+    \caption{: Proportion of married women using modern contraception in the NFHS 3, 4, \& 5}
+    \label{tab:sumstat}
+    \adjustbox{width=\textwidth}{\input{tables/modern_contraception}}
+\end{table}
+Interpretation: women are more able to decide despite social pressure of having a boy/child
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/ultrasound by pregnancy duration.png}
+%     \caption{: Proportion of pregnant women who have had an ultrasound by gestational duration in NFHS 4, \& 5}
+% \end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{: Proportion of pregnant women who have had an ultrasound by gestational duration in NFHS 4, \& 5}
+    \label{tab:sumstat}
+    \adjustbox{width=\textwidth}{\input{tables/modern_contraception}}
+\end{table}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tables/says pregnant by gestational duration.png}
+    \caption{: Proportion of women who report not being pregnant by months since last period in the NFHS 4, \& 5}
+\end{figure}
+
 
 \end{document}
 
@@ -76,5 +125,15 @@ fix lines on end-pregnancy BMI
 remove titles on graphs from stata
 label xaxis on kdensity age
 maybe make stats on kdensity age separate table
+
+
+
+
+- different living situations between pregnant, non-pregnant women (with reweighting), all non-pregnant women (without reweighting)
+- create categories of household type accordingly
+- model off: https://link.springer.com/article/10.1007/s13524-012-0173-1
+
+- then get breakdown of proportion of pregnant
+
 
 
