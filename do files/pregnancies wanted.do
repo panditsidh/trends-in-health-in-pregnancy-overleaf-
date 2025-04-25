@@ -37,11 +37,17 @@ foreach r of numlist 3/5 {
 		
 		eststo round`r': estadd scalar preg_wanted`p' = r(mean)*100
 	}
+	
+	sum preg_wanted_then [aw=v005] if round==`r' & v213==1
+	eststo round`r': estadd scalar preg_wanted_total = r(mean)*100
+	
 }
 
 #delimit ;
 esttab round3 round4 round5 using $out_github, 
-	stats(preg_wanted1 preg_wanted2 preg_wanted3 preg_wanted4, labels("Parity 1" "Parity 2" "Parity 3" "Parity 4+")) 
+	replace
+	stats(preg_wanted1 preg_wanted2 preg_wanted3 preg_wanted4 preg_wanted_total, labels("Parity 1" "Parity 2" "Parity 3" "Parity 4+" "Total")) 
 	drop(v213 _cons)
 	mtitle("NFHS-3" "NFHS-4" "NFHS-5")
-	nonumber;
+	nonumber
+	booktabs;
