@@ -49,5 +49,5 @@ esttab round3 round4 round5 using $out_github,
 	stats(preg_wanted1 preg_wanted2 preg_wanted3 preg_wanted4 preg_wanted_total, labels("Parity 1" "Parity 2" "Parity 3" "Parity 4+" "Total")) 
 	drop(v213 _cons)
 	mtitle("NFHS-3" "NFHS-4" "NFHS-5")
-	nonumber
+	nonumbers nostar noobs not postfoot("")
 	booktabs;
