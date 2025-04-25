@@ -68,12 +68,13 @@ TODO
     \caption{: Bar graph of number of living children among currently pregnant women in the NFHS 3, 4, \& 5}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{tables/table of gestational duration.png}
-    \caption{: Proportion of pregnant women by gestational duration in the NFHS 3, 4, \& 5}
-\end{figure}
 
+\begin{table}[H]
+    \centering
+    \caption{: Proportion of pregnant women by gestational duration in the NFHS 3, 4, \& 5}
+    \label{tab:sumstat}
+    \adjustbox{width=\textwidth}{\input{tables/table_of_gestational_duration}}
+\end{table}
 
 
 TODO:
@@ -96,18 +97,13 @@ TODO:
 \end{table}
 Interpretation: women are more able to decide despite social pressure of having a boy/child
 
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\textwidth]{figures/ultrasound by pregnancy duration.png}
-%     \caption{: Proportion of pregnant women who have had an ultrasound by gestational duration in NFHS 4, \& 5}
-% \end{figure}
-
-\begin{table}[H]
+\begin{figure}[H]
     \centering
+    \includegraphics[width=\textwidth]{figures/ultrasound by pregnancy duration.png}
     \caption{: Proportion of pregnant women who have had an ultrasound by gestational duration in NFHS 4, \& 5}
-    \label{tab:sumstat}
-    \adjustbox{width=\textwidth}{\input{tables/table}}
-\end{table}
+\end{figure}
+
+
 
 
 \begin{figure}[H]
@@ -115,6 +111,7 @@ Interpretation: women are more able to decide despite social pressure of having 
     \includegraphics[width=\textwidth]{tables/says pregnant by gestational duration.png}
     \caption{: Proportion of women who report not being pregnant by months since last period in the NFHS 4, \& 5}
 \end{figure}
+
 
 
 \end{document}
