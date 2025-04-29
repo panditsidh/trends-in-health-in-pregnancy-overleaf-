@@ -89,7 +89,7 @@ foreach x of numlist 3/5 {
 clear all
 
 if `x'==3 {
-	use caseid s46* v* using $nfhs_ir	
+	use caseid s46* v*  using $nfhs_ir	
 }
 
 
