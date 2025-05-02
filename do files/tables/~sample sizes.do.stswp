@@ -3,6 +3,9 @@
 if "`c(username)'" == "sidhpandit" {
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
 	
+	
+	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
+	
 	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/sample_sizes.tex"
 	
 	
@@ -10,7 +13,7 @@ if "`c(username)'" == "sidhpandit" {
 }
 
 
-use $ir_combined, clear
+use $ihr_pregnant, clear
 
 
 gen rural = v102==2
@@ -60,14 +63,22 @@ gen sikh_jain_christian = 0
 replace sikh_jain_christian = 100 if inlist(v130, 3,4,6)
 
 
+drop bhai-bahu
 
 eststo clear
 foreach r of numlist 3/5 {
-    estpost ci eag north south east west central northeast rural urban ///
-        forward obc dalit adivasi muslim sikh_jain_christian ///
-        if round == `r'
+    estpost ci eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r'
     eststo round_`r'
 }
+
+
+
+#delimit ;
+esttab round_3 round_4 round_5, 
+    cells("b(fmt(3)) lb(fmt(3)) ub(fmt(3))") 
+    collabels("Mean" "lb" "ub") 
+    mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
+	label;
 
 
 #delimit ;
