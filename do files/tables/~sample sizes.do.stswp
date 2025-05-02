@@ -75,5 +75,6 @@ esttab round_3 round_4 round_5 using $out_tex, replace
     cells("b(fmt(3)) lb(fmt(3)) ub(fmt(3))") 
     collabels("Mean" "95% CI lower" "95% CI upper") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
-	label booktabs;
+	label;
+
 
