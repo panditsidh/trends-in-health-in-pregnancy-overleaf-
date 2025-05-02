@@ -41,27 +41,32 @@ gen eag = inlist(v024, 5, 7, 15, 19, 26, 29, 33, 34)
 
 
 gen forward = 0
-replace forward = 100 if s46==4 & round==3
-replace forward = 100 if s116==4 & (round==4|round==5)
+replace forward = 1 if s46==4 & round==3
+replace forward = 1 if s116==4 & (round==4|round==5)
 
 gen obc = 0
-replace obc = 100 if s116==3 & (round==4|round==5)
-replace obc = 100 if s46==3 & round==3
+replace obc = 1 if s116==3 & (round==4|round==5)
+replace obc = 1 if s46==3 & round==3
 
 gen dalit = 0
-replace dalit = 100 if s46==1 & round==3
-replace dalit = 100 if s116==1 & (round==4|round==5) 
+replace dalit = 1 if s46==1 & round==3
+replace dalit = 1 if s116==1 & (round==4|round==5) 
 
 gen adivasi = 0 
-replace adivasi = 100 if s46 == 2 & round==3
-replace adivasi = 100 if s116==2 & (round==4|round==5)
+replace adivasi = 1 if s46 == 2 & round==3
+replace adivasi = 1 if s116==2 & (round==4|round==5)
 
 gen muslim = 0
-replace muslim = 100 if v130==2
+replace muslim = 1 if v130==2
 
 gen sikh_jain_christian = 0
-replace sikh_jain_christian = 100 if inlist(v130, 3,4,6)
+replace sikh_jain_christian = 1 if inlist(v130, 3,4,6)
 
+
+foreach var in eag north south west central east northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal mil fil natal_usual natal_visitor sasural_fil sasural_mil sasural_pil nuclear_head nuclear_husband {
+	
+	replace `var' = `var'*100
+}
 
 drop bhai-bahu
 
@@ -70,6 +75,35 @@ foreach r of numlist 3/5 {
     estpost ci eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r'
     eststo round_`r'
 }
+
+label variable eag             "EAG States"
+label variable north           "North"
+label variable south           "South"
+label variable west            "West"
+label variable central         "Central"
+label variable east            "East"
+label variable northeast       "Northeast"
+label variable rural           "Rural"
+label variable urban           "Urban"
+label variable forward         "Forward Caste"
+label variable obc             "OBC"
+label variable dalit           "Dalit"
+label variable adivasi         "Adivasi"
+label variable muslim          "Muslim"
+label variable sikh_jain_christian "Sikh/Jain/Christian"
+label variable nuclear         "Observed in nuclear family"
+label variable sasural         "Observed in sasural"
+label variable natal           "Observed in meika"
+label variable mil             "Observed in mother-in-law's home"
+label variable fil             "Observed in father-in-law's home"
+label variable natal_usual     "Natal (usual residence)"
+label variable natal_visitor   "Natal (visiting)"
+label variable sasural_fil     "Sasural – FIL present"
+label variable sasural_mil     "Sasural – MIL present"
+label variable sasural_pil     "Sasural – PILs present"
+label variable nuclear_head    "Nuclear HH – Woman is head"
+label variable nuclear_husband "Nuclear HH – Husband is head"
+
 
 
 
