@@ -1,0 +1,240 @@
+
+if "`c(username)'" == "sidhpandit" {
+	global nfhs5hr "/Users/sidhpandit/Desktop/nfhs/nfhs5hr/IAHR7EFL.DTA"
+	global nfhs4hr "/Users/sidhpandit/Desktop/nfhs/nfhs4hr/IAHR74FL.DTA"
+	global nfhs3hr "/Users/sidhpandit/Desktop/nfhs/nfhs3hr/IAHR52FL.dta"	
+	
+	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
+	
+	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
+	
+}
+
+
+* merge women to their households
+
+use hv* using $nfhs5hr, clear
+tempfile nfhs5hr
+save `nfhs5hr'
+
+use hv* using $nfhs4hr, clear
+append using $nfhs3hr
+append using `nfhs5hr'
+
+
+rename hv000 v000
+rename hv001 v001 
+rename hv002 v002
+
+
+tempfile hr_combined
+save `hr_combined'
+
+use $ir_combined
+keep if v213==1
+merge m:1 v000 v001 v002 using `hr_combined', generate(hh_merge)
+
+drop if hh_merge==2
+
+
+
+/*
+
+questions
+- quality of "household head" reporting wrt migration
+
+case where
+- woman's parent in law is household head
+
+
+info we want from woman's perspective:
+
+-  badi/choti bahu (sister in law of husband)
+-  male members younger to her husband (besides father in law????)
+-  male members older to her husband
+
+
+sasural: just mil 
+sasural: just fil
+sasural: both pil
+
+natal: usual resident
+natal: not usual resident
+
+nuclear: hh head
+nuclear: husband hh head
+
+
+*/
+
+
+gen nuclear = 0
+gen sasural = 0
+gen natal = 0
+
+replace sasural = 1 if v150==4  // woman is dil of hh head
+replace natal = 1 if v150==3  // woman is daughter of hh head
+
+gen mil = 0
+gen fil = 0
+
+gen bhai = 0
+gen bade_bhai = 0
+gen chota_bhai = 0
+
+gen bahu = 0
+
+* if woman's husband is hh head, are his parents/siblings present?
+if v150==2 {
+	
+	foreach i of numlist 2/41 {
+		
+		if `i'<10 {
+			local j = "0`i'"
+		}
+		
+		* parent in law is present
+		replace sasural = 1 if hv101_`j'==6
+		replace fil = 1 if hv101_`j'==6 & hv104_`j'==1
+		replace mil = 1 if hv101_`j'==6 & hv104_`j'==2
+		
+		* husband's brother/sister
+		if hv101_`j'==8 {
+			replace bhai = 1
+			replace bade_bhai = 1 if hv104_`j'==1 & hv105_`j'>hv105_01
+			replace chota_bhai = 1 if hv104_`j'==1 & hv105_`j'>hv105_01			
+		}
+
+		*husband's brother's wife?
+		replace bahu = 1 if hv101_`j'==15 & hv104_`j'==2	
+	}
+	
+}
+
+* if woman's parent-in-law is hh head, who else is present
+if v150==4 {
+	
+	replace sasural = 1
+	replace nuclear = 0
+	
+	replace fil = 1 if v151==1
+	replace mil = 1 if v151==2
+	
+	
+	foreach i of numlist 2/41 {
+		
+		if `i'<10 {
+			local j = "0`i'"
+		}
+		
+		replace fil==1 if v151==2 & hv101_`j'==2
+		replace mil==1 if v151==2 & hv101_`j'==2
+	
+		* son of household head (bade/ chota bhai harder in this case)
+		replace bhai = 1 if hv101_`j'==3 & v034!=`j'
+		
+		replace bahu = 1 if hv101_`j'==4 & hv104_`j'==2
+		
+	}
+}
+
+
+
+* woman is household head
+if v150==1 {
+	foreach i of numlist 2/41 {
+		
+		if `i'<10 {
+			local j = "0`i'"
+		}
+		
+		replace mother = 1 if hv101_`j'==6 & hv104_`j'==2
+		replace father = 1 if hv101_`j'==6 & hv104_`j'==1
+		
+		replace mil = 1 if hv101_`j'==7 & hv104_`j'==2
+		replace fil = 1 if hv101_`j'==7 & hv104_`j'==1
+		
+	}
+
+}
+
+replace nuclear = 1 if (v150==1|v150==2) & mil==0 & fil==0
+
+
+gen natal_usual = natal==1 & v135==1
+gen natal_visitor = natal==1 & v135==2
+
+gen sasural_fil = sasural==1 & fil==1 & mil==0
+gen sasural_mil = sasural==1 & fil==0 & mil==1
+gen sasural_pil = sasural==1 & fil==1 & mil==1
+
+gen nuclear_head = nuclear==1 & v150==1
+gen nuclear_husband
+
+
+save $ihr_pregnant, replace
+
+/*
+
+
+
+
+
+
+
+
+
+dimensions of living situation of pregnant women
+
+
+extended:
+- both parents in law
+- just mother in law
+- just father in law
+- married sibling
+- unmarried sibling
+- niece/nephews
+
+
+
+
+ok so we need to know
+
+
+how is the pregnant woman related with the head of the household (already in IR)
+- that tells us if she's in natal home or sasural
+
+
+
+
+who else lives in the househoold
+
+- merge the household dataset
+- shstruc variable (nuclear/non-nuclear)
+
+
+- go through relationship to household head variable
+
+
+
+if household head = husband
+{
+	if linenumber relationship = mother {
+		
+		mil_present = 1
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+*/
