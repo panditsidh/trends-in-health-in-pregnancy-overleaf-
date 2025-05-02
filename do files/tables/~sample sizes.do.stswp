@@ -72,7 +72,7 @@ drop bhai-bahu
 
 eststo clear
 foreach r of numlist 3/5 {
-    estpost ci eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r'
+    estpost ci eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r' [aw=v005]
     eststo round_`r'
 }
 
@@ -109,7 +109,7 @@ label variable nuclear_husband "Nuclear HH – Husband is head"
 
 #delimit ;
 esttab round_3 round_4 round_5, 
-    cells("b(fmt(3)) lb(fmt(3)) ub(fmt(3))") 
+    cells("b(fmt(2)) lb(fmt(2)) ub(fmt(2))") 
     collabels("Mean" "lb" "ub") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
 	label;
@@ -117,7 +117,7 @@ esttab round_3 round_4 round_5,
 
 #delimit ;
 esttab round_3 round_4 round_5 using $out_tex, replace 
-    cells("b(fmt(3)) lb(fmt(3)) ub(fmt(3))") 
+    cells("b(fmt(2)) lb(fmt(2)) ub(fmt(2))") 
     collabels("Mean" "lb" "ub") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
 	label;
