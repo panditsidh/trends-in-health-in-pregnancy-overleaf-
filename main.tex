@@ -114,13 +114,40 @@ Interpretation: women are more able to decide despite social pressure of having 
 
 
 
-
 \begin{table}[H]
     \centering
-    \caption{: Sample sizes table (sheet 1 of table formats)}
+    \renewcommand{\arraystretch}{0.65} % shrink row height
+    \setlength{\tabcolsep}{4pt} % shrink column padding
+    \footnotesize % shrink text
+    \caption{: Sample sizes table}
     \label{tab:sumstat}
-    \adjustbox{width=\textwidth}{\input{tables/sample_sizes2}}
+    \begin{adjustbox}{width=\textwidth}
+        \input{tables/sample_sizes2}
+    \end{adjustbox}
+
 \end{table}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tables/sample_sizes3.png}
+    \caption{: NFHS-3 sample sizes table with confidence intervals}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tables/sample_sizes4.png}
+    \caption{: NFHS-4 sample sizes table with confidence intervals}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tables/sample_sizes5.png}
+    \caption{: NFHS-5 sample sizes table with confidence intervals}
+\end{figure}
+
+
+
 
 \end{document}
 
