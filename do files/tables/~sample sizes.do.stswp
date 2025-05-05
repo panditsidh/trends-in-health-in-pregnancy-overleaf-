@@ -21,8 +21,14 @@ use $ihr_pregnant, clear
 
 eststo clear
 foreach r of numlist 3/5 {
-    svy: mean eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r' 
+	
+	preserve
+	keep if round==`r'
+	
+    svy: mean eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband
     eststo round_`r'
+	
+	restore
 }
 
 
