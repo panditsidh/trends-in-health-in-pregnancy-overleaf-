@@ -16,60 +16,45 @@ if "`c(username)'" == "sidhpandit" {
 use $ihr_pregnant, clear
 
 
+replace strata = 137 if strata==138
+svyset psu [pw=wt], strata(strata)
+
 ** make sure it's only 3+ MO preg. women
 
+foreach var in eag north central east northeast west south rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal {
+	
+	replace `var' = `var'*100
+}
 
-eststo clear
 foreach r of numlist 3/5 {
 	
 	preserve
 	keep if round==`r'
-	
-    svy: mean eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband
-    eststo round_`r'
+	svy: mean eag north central east northeast west south rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal
 	
 	restore
 }
 
 
-#delimit ;
-esttab round_3 round_4 round_5, 
-    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
-    collabels("Mean" "lb" "ub") 
-    mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
-	label;
-
-
-#delimit ;
-esttab round_3 round_4 round_5 using $out_tex, replace 
-    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
-    collabels("Mean" "lb" "ub") 
-    mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
-	label;
-
-
-
+*** sadly this doesn't work with confidence intervals
 
 eststo clear
 foreach r of numlist 3/5 {
-    estpost ci eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r' [aw=wt]
+	
+	preserve 
+	keep if round==`r'
+    svy: mean eag north-northeast rural urban forward-sikh_jain_christian nuclear sasural natal natal_usual natal_visitor nuclear_head nuclear_husband
     eststo round_`r'
+	restore
 }
 
 
 #delimit ;
-esttab round_3 round_4 round_5, 
-    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
-    collabels("Mean" "lb" "ub") 
+esttab round_3 round_4 round_5 using $out_tex2, replace
+    collabels("Mean" "SE") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
-	label;
+	label
+	se par;
 
-
-#delimit ;
-esttab round_3 round_4 round_5 using $out_tex2, replace 
-    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
-    collabels("Mean" "lb" "ub") 
-    mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
-	label;
 
 	
