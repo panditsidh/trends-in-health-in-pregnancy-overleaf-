@@ -15,13 +15,20 @@ if "`c(username)'" == "sidhpandit" {
 
 use $ihr_pregnant, clear
 
+keep if mopreg>=3
+
+gen natal_usual = natal==1 & v135==1
+gen natal_visitor = natal==1 & v135==2
+gen nuclear_head = nuclear==1 & v150==1
+gen nuclear_husband = nuclear==1 & v150==2
+
 
 replace strata = 137 if strata==138
 svyset psu [pw=wt], strata(strata)
 
 ** make sure it's only 3+ MO preg. women
 
-foreach var in eag north central east northeast west south rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal {
+foreach var in eag north central east northeast west south rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal_usual natal_visitor nuclear_head nuclear_husband {
 	
 	replace `var' = `var'*100
 }
