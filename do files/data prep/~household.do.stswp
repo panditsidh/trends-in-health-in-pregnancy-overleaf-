@@ -38,6 +38,77 @@ drop if hh_merge==2
 
 
 
+*-------------------------------------------------------------
+* Setup: Generate household structure flags
+*-------------------------------------------------------------
+gen nuclear = 0
+gen sasural = 0
+gen natal = 0
+
+gen mil = 0
+gen fil = 0
+
+gen bhai = 0
+gen bade_bhai = 0
+gen chota_bhai = 0
+
+gen bahu = 0
+
+gen mother = 0
+gen father = 0
+
+*-------------------------------------------------------------
+* Loop over other household members
+*-------------------------------------------------------------
+forvalues i = 2/41 {
+    local j = string(`i', "%02.0f")
+
+    * Relationship code: hv101_`j'
+    * Sex code: hv104_`j'
+    * Age: hv105_`j'
+    
+    * Presence of in-laws (code 6 = parent-in-law)
+    replace sasural = 1 if v150==2 & hv101_`j'==6
+    replace fil     = 1 if v150==2 & hv101_`j'==6 & hv104_`j'==1
+    replace mil     = 1 if v150==2 & hv101_`j'==6 & hv104_`j'==2
+
+    * Husband's siblings (code 8 = sibling-in-law)
+    replace bhai        = 1 if v150==2 & hv101_`j'==8
+    replace bade_bhai   = 1 if v150==2 & hv101_`j'==8 & hv104_`j'==1 & hv105_`j' > hv105_01
+    replace chota_bhai  = 1 if v150==2 & hv101_`j'==8 & hv104_`j'==1 & hv105_`j' < hv105_01
+
+    * Husband's brother's wife: code 15 = sibling-in-law's spouse
+    replace bahu = 1 if v150==2 & hv101_`j'==15 & hv104_`j'==2
+
+    * If woman is daughter of HH head → natal home
+    replace natal = 1 if v150==3
+
+    * If woman is daughter-in-law → sasural
+    replace sasural = 1 if v150==4
+
+    * Additional parent-in-law logic if HH head is parent-in-law
+    replace fil = 1 if v150==4 & v151==1
+    replace mil = 1 if v150==4 & v151==2
+
+    * Siblings and spouses present in sasural cases
+    replace bhai = 1 if v150==4 & hv101_`j'==3 & v034 != `i'
+    replace bahu = 1 if v150==4 & hv101_`j'==4 & hv104_`j'==2
+
+    * If woman is HH head, check for presence of own or in-laws
+    replace mother = 1 if v150==1 & hv101_`j'==6 & hv104_`j'==2
+    replace father = 1 if v150==1 & hv101_`j'==6 & hv104_`j'==1
+    replace mil    = 1 if v150==1 & hv101_`j'==7 & hv104_`j'==2
+    replace fil    = 1 if v150==1 & hv101_`j'==7 & hv104_`j'==1
+}
+
+*-------------------------------------------------------------
+* Define nuclear: woman is head or spouse, and no in-laws present
+*-------------------------------------------------------------
+replace nuclear = 1 if inlist(v150,1,2) & mil == 0 & fil == 0
+
+
+save $ihr_pregnant, replace
+
 /*
 
 questions
@@ -68,6 +139,8 @@ nuclear: husband hh head
 */
 
 
+
+
 gen nuclear = 0
 gen sasural = 0
 gen natal = 0
@@ -92,6 +165,7 @@ if v150==2 {
 		if `i'<10 {
 			local j = "0`i'"
 		}
+
 		
 		* parent in law is present
 		replace sasural = 1 if hv101_`j'==6
@@ -169,12 +243,27 @@ gen sasural_mil = sasural==1 & fil==0 & mil==1
 gen sasural_pil = sasural==1 & fil==1 & mil==1
 
 gen nuclear_head = nuclear==1 & v150==1
-gen nuclear_husband
+gen nuclear_husband = nuclear==1 & v150==2
+
+
+label variable nuclear         "Observed in nuclear family"
+label variable sasural         "Observed in sasural"
+label variable natal           "Observed in meika"
+label variable mil             "Observed in mother-in-law's home"
+label variable fil             "Observed in father-in-law's home"
+label variable natal_usual     "Natal (usual residence)"
+label variable natal_visitor   "Natal (visiting)"
+label variable sasural_fil     "Sasural – FIL present"
+label variable sasural_mil     "Sasural – MIL present"
+label variable sasural_pil     "Sasural – PILs present"
+label variable nuclear_head    "Nuclear HH – Woman is head"
+label variable nuclear_husband "Nuclear HH – Husband is head"
 
 
 save $ihr_pregnant, replace
 
 /*
+
 
 
 
@@ -225,6 +314,7 @@ if household head = husband
 		
 	}
 }
+
 
 
 
