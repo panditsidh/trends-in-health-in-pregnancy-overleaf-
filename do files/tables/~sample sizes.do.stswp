@@ -54,7 +54,8 @@ esttab round_3 round_4 round_5 using $out_tex2, replace
     collabels("Mean" "SE") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
 	label
-	se par;
+	se par
+	booktabs;
 
 
 	
