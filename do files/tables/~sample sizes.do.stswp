@@ -8,7 +8,7 @@ if "`c(username)'" == "sidhpandit" {
 	
 	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/sample_sizes.tex"
 	
-	
+	global out_tex2 "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/sample_sizes2.tex"
 	
 }
 
@@ -16,100 +16,19 @@ if "`c(username)'" == "sidhpandit" {
 use $ihr_pregnant, clear
 
 
-gen rural = v102==2
+** make sure it's only 3+ MO preg. women
 
-
-gen india = 1
-gen state = v024
-
-*region 
-gen north = 0
-gen south = 0
-gen west = 0
-gen central = 0
-gen east = 0
-gen northeast = 0
-
-* Assign zone based on state codes
-replace north = 1 if inlist(state, 1, 2, 3, 4, 5, 6, 7, 9, 10)  // Jammu & Kashmir, Himachal Pradesh, Punjab, Chandigarh, Uttarakhand, Haryana, NCT of Delhi, Uttar Pradesh, Bihar
-replace south = 1 if inlist(state, 28, 29, 32, 33, 34, 35, 36)  // Andhra Pradesh, Karnataka, Kerala, Tamil Nadu, Puducherry, Andaman & Nicobar Islands, Telangana
-replace west = 1 if inlist(state, 23, 24, 25, 27, 30)  // Maharashtra, Gujarat, Dadra & Nagar Haveli, Lakshadweep
-replace central = 1 if inlist(state, 21, 22, 23)  // Odisha, Chhattisgarh, Madhya Pradesh
-replace east = 1 if inlist(state, 18, 19, 20)  // Assam, West Bengal, Jharkhand
-replace northeast = 1 if inlist(state, 11, 12, 13, 14, 15, 16, 17)  // Sikkim, Arunachal Pradesh, Nagaland, Manipur, Mizoram, Tripura, Meghalaya
-gen eag = inlist(v024, 5, 7, 15, 19, 26, 29, 33, 34)
-
-
-gen forward = 0
-replace forward = 1 if s46==4 & round==3
-replace forward = 1 if s116==4 & (round==4|round==5)
-
-gen obc = 0
-replace obc = 1 if s116==3 & (round==4|round==5)
-replace obc = 1 if s46==3 & round==3
-
-gen dalit = 0
-replace dalit = 1 if s46==1 & round==3
-replace dalit = 1 if s116==1 & (round==4|round==5) 
-
-gen adivasi = 0 
-replace adivasi = 1 if s46 == 2 & round==3
-replace adivasi = 1 if s116==2 & (round==4|round==5)
-
-gen muslim = 0
-replace muslim = 1 if v130==2
-
-gen sikh_jain_christian = 0
-replace sikh_jain_christian = 1 if inlist(v130, 3,4,6)
-
-
-foreach var in eag north south west central east northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal mil fil natal_usual natal_visitor sasural_fil sasural_mil sasural_pil nuclear_head nuclear_husband {
-	
-	replace `var' = `var'*100
-}
-
-drop bhai-bahu
 
 eststo clear
 foreach r of numlist 3/5 {
-    estpost ci eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r' [aw=v005]
+    svy: mean eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r' 
     eststo round_`r'
 }
-
-label variable eag             "EAG States"
-label variable north           "North"
-label variable south           "South"
-label variable west            "West"
-label variable central         "Central"
-label variable east            "East"
-label variable northeast       "Northeast"
-label variable rural           "Rural"
-label variable urban           "Urban"
-label variable forward         "Forward Caste"
-label variable obc             "OBC"
-label variable dalit           "Dalit"
-label variable adivasi         "Adivasi"
-label variable muslim          "Muslim"
-label variable sikh_jain_christian "Sikh/Jain/Christian"
-label variable nuclear         "Observed in nuclear family"
-label variable sasural         "Observed in sasural"
-label variable natal           "Observed in meika"
-label variable mil             "Observed in mother-in-law's home"
-label variable fil             "Observed in father-in-law's home"
-label variable natal_usual     "Natal (usual residence)"
-label variable natal_visitor   "Natal (visiting)"
-label variable sasural_fil     "Sasural – FIL present"
-label variable sasural_mil     "Sasural – MIL present"
-label variable sasural_pil     "Sasural – PILs present"
-label variable nuclear_head    "Nuclear HH – Woman is head"
-label variable nuclear_husband "Nuclear HH – Husband is head"
-
-
 
 
 #delimit ;
 esttab round_3 round_4 round_5, 
-    cells("b(fmt(2)) lb(fmt(2)) ub(fmt(2))") 
+    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
     collabels("Mean" "lb" "ub") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
 	label;
@@ -117,9 +36,34 @@ esttab round_3 round_4 round_5,
 
 #delimit ;
 esttab round_3 round_4 round_5 using $out_tex, replace 
-    cells("b(fmt(2)) lb(fmt(2)) ub(fmt(2))") 
+    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
     collabels("Mean" "lb" "ub") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
 	label;
 
 
+
+
+eststo clear
+foreach r of numlist 3/5 {
+    estpost ci eag north-northeast rural urban forward-sikh_jain_christian nuclear-nuclear_husband if round == `r' [aw=wt]
+    eststo round_`r'
+}
+
+
+#delimit ;
+esttab round_3 round_4 round_5, 
+    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
+    collabels("Mean" "lb" "ub") 
+    mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
+	label;
+
+
+#delimit ;
+esttab round_3 round_4 round_5 using $out_tex2, replace 
+    cells("b(fmt(2)) lb(fmt(4)) ub(fmt(4))") 
+    collabels("Mean" "lb" "ub") 
+    mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) nonumbers 
+	label;
+
+	
