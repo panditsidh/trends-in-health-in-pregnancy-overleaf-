@@ -116,7 +116,18 @@ Interpretation: women are more able to decide despite social pressure of having 
 
 \begin{table}[H]
     \centering
-    \renewcommand{\arraystretch}{0.65} % shrink row height
+    \setlength{\tabcolsep}{4pt} % shrink column padding
+    \footnotesize % shrink text
+    \caption{: Sample sizes table}
+    \label{tab:sumstat}
+    \begin{adjustbox}{width=\textwidth}
+        \input{tables/sample_sizes}
+    \end{adjustbox}
+\end{table}
+
+
+\begin{table}[H]
+    \centering
     \setlength{\tabcolsep}{4pt} % shrink column padding
     \footnotesize % shrink text
     \caption{: Sample sizes table}
@@ -124,8 +135,9 @@ Interpretation: women are more able to decide despite social pressure of having 
     \begin{adjustbox}{width=\textwidth}
         \input{tables/sample_sizes2}
     \end{adjustbox}
-
 \end{table}
+
+
 
 
 
