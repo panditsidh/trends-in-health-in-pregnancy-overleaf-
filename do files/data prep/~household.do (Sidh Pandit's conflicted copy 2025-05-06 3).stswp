@@ -55,7 +55,7 @@ save `hr_combined'
 
 use $ir_combined
 
-keep if v213==1
+keep if v213==
 merge m:1 v000 v001 v002 using `hr_combined', generate(hh_merge)
 
 drop if hh_merge==2
