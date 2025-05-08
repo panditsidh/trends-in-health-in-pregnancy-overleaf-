@@ -16,23 +16,23 @@ if "`c(username)'" == "sidhpandit" {
 	global nfhs5hmr "/Users/sidhpandit/Desktop/nfhs/nfhs3hmr/nfhs5hmr/IAPR7EFL.DTA"
 }
 
-
-use $nfhs3hmr, clear
-append using $nfhs4hmr
-append using $nfhs5hmr
-
-rename hv000 v000
-rename hv001 v001 
-rename hv002 v002
-
-tempfile hmr_combined
-save `hmr_combined'
-
-use $ir_combined, clear
-
-joinby v000 v001 v002 using `hmr_combined', unmatched(master) _merge(joinby_m)
-
-merge m:m v000 v001 v002 using `hmr_combined', generate(hh_merge)
+// * trying this with the hmr
+// use $nfhs3hmr, clear
+// append using $nfhs4hmr
+// append using $nfhs5hmr
+//
+// rename hv000 v000
+// rename hv001 v001 
+// rename hv002 v002
+//
+// tempfile hmr_combined
+// save `hmr_combined'
+//
+// use $ir_combined, clear
+//
+// joinby v000 v001 v002 using `hmr_combined', unmatched(master) _merge(joinby_m)
+//
+// merge m:m v000 v001 v002 using `hmr_combined', generate(hh_merge)
 
 
 
@@ -54,6 +54,8 @@ tempfile hr_combined
 save `hr_combined'
 
 use $ir_combined
+
+keep if v213==1
 merge m:1 v000 v001 v002 using `hr_combined', generate(hh_merge)
 
 drop if hh_merge==2
@@ -123,7 +125,7 @@ forvalues i = 2/41 {
 *-------------------------------------------------------------
 replace nuclear = 1 if inlist(v150,1,2) & mil == 0 & fil == 0 & mother==0 & father==0
 
-label variable nuclear         "Observed in nuclear family"
+label variable nuclear         "Observed in nuclear"
 label variable sasural         "Observed in sasural"
 label variable natal           "Observed in meika"
 label variable mil             "Observed in mother-in-law's home"

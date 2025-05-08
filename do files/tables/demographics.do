@@ -10,19 +10,13 @@ if "`c(username)'" == "sidhpandit" {
 	
 }
 
-
+*** test comment
 use $ir_combined, clear
-
-
 
 keep if v213==1
 
-
-
-
 replace strata = 137 if strata==138
 svyset psu [pw=wt], strata(strata)
-
 
 foreach var in eag central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian {
 	
@@ -38,4 +32,4 @@ foreach var in eag central east west north south northeast rural urban forward o
 	}
 }
 
-esttab model_3 model)4
+esttab model_3 model_4
