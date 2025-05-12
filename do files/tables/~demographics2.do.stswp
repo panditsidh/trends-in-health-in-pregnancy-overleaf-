@@ -64,6 +64,12 @@ foreach r in 3 4 5 {
 * Combine all three rounds horizontally
 matrix full_ci = m_ci_round3 , m_ci_round4 , m_ci_round5
 
+* Assign rownames (hardcoded, same for all rounds)
+matrix rownames full_ci = ///
+    Focus Central East West North South Northeast ///
+    Rural Urban ///
+    "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
+
 local nrows = rowsof(full_ci)
 local ncols = colsof(full_ci)
 
@@ -77,7 +83,6 @@ forvalues i = 1/`nrows' {
 esttab matrix(full_ci) using $out_tex, replace fragment
     title("Mean v012 with Confidence Intervals by Group and Survey Round")
     noobs nonumber label booktabs;
-
 
 
 
