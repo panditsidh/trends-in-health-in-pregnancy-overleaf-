@@ -87,11 +87,11 @@ forvalues i = 1/`nrows' {
 
 #delimit ;
 esttab matrix(full_ci), replace
-    title("Mean v012 with 95% Confidence Intervals by Group and Survey Round")
+    title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
     noobs nonumber label;
 
 #delimit ;
-esttab matrix(full_ci) using $out_tex, replace
-    title("Mean v012 with 95% Confidence Intervals by Group and Survey Round")
+esttab matrix(full_ci) using $out_tex, replace fragment
+    title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
 	cells("mean(fmt(2))")
-    noobs nonumber label;
+    noobs nonumber label booktabs;
