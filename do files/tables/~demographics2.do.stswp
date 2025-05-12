@@ -85,7 +85,7 @@ forvalues i = 1/`nrows' {
 
 
 #delimit ;
-esttab matrix(full_ci) using $out_tex, replace fragment
+esttab matrix(full_ci) using $out_tex, replace
     title("Mean v012 with Confidence Intervals by Group and Survey Round")
     noobs nonumber label booktabs;
 
