@@ -19,7 +19,11 @@ replace strata = 137 if strata==138
 replace strata = 60 if strata==59
 replace strata = 107 if strata==108
 
-svyset psu [pw=wt], strata(strata) singleunit(centered)
+replace strata = 93 if strata==94
+replace strata = 143 if strata==144
+
+
+svyset psu [pw=wt], strata(strata)
 
 
 gen full_term_date = v008+(9-mopreg)
