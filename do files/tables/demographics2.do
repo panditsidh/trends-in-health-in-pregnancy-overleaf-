@@ -4,7 +4,7 @@ if "`c(username)'" == "sidhpandit" {
 	
 	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
 	
-	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics2.tex"
+	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics2_bi.tex"
 
 	
 }
@@ -19,7 +19,11 @@ replace strata = 137 if strata==138
 replace strata = 60 if strata==59
 replace strata = 107 if strata==108
 
-svyset psu [pw=wt], strata(strata) singleunit(centered)
+replace strata = 93 if strata==94
+replace strata = 143 if strata==144
+
+
+svyset psu [pw=wt], strata(strata)
 
 
 gen full_term_date = v008+(9-mopreg)
@@ -64,6 +68,12 @@ foreach r in 3 4 5 {
 * Combine all three rounds horizontally
 matrix full_ci = m_ci_round3 , m_ci_round4 , m_ci_round5
 
+* Assign rownames (hardcoded, same for all rounds)
+matrix rownames full_ci = ///
+    Focus Central East West North South Northeast ///
+    Rural Urban ///
+    "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
+
 local nrows = rowsof(full_ci)
 local ncols = colsof(full_ci)
 
@@ -73,11 +83,10 @@ forvalues i = 1/`nrows' {
     }
 }	
 
+
 #delimit ;
 esttab matrix(full_ci) using $out_tex, replace
-    title("Mean v012 with Confidence Intervals by Group and Survey Round")
     noobs nonumber label booktabs;
-
 
 
 
