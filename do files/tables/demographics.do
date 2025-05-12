@@ -69,12 +69,12 @@ matrix rownames full_ci = ///
     "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
 
 	
-#delimit ;
-esttab matrix(full_ci) using $out_tex, replace
-    title("Mean v012 with 95% Confidence Intervals by Group and Survey Round")
-	cells("mean(fmt(2))")
-    noobs nonumber label;
-	
+// #delimit ;
+// esttab matrix(full_ci) using $out_tex, replace
+//     title("Mean v012 with 95% Confidence Intervals by Group and Survey Round")
+// 	cells("mean(fmt(2))")
+//     noobs nonumber label;
+//	
 
 local nrows = rowsof(full_ci)
 local ncols = colsof(full_ci)
