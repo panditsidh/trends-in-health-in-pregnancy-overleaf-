@@ -27,7 +27,6 @@ svyset psu [pw=wt], strata(strata)
 
 
 gen full_term_date = v008+(9-mopreg)
-
 gen birth_interval = full_term_date-v211
 
 
