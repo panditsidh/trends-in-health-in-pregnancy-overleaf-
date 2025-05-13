@@ -90,7 +90,7 @@ foreach r of numlist 3/5 {
 #delimit ;
 esttab round_3 round_4 round_5,
     cells("mean(fmt(1))") 
-    collabels("% of sample") 
+    collabels("percent of sample") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1)) 
     label
 	nonumbers;
@@ -98,7 +98,7 @@ esttab round_3 round_4 round_5,
 #delimit ;
 esttab round_3 round_4 round_5 using $out_tex2, replace
     cells("mean(fmt(1))") 
-    collabels("% of sample") 
+    collabels("percent of sample") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) 
     label
 	nonumbers
