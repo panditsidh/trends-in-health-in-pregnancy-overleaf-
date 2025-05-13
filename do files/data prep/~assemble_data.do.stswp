@@ -509,15 +509,15 @@ replace health_facility_alone = s930b==1 if round==5 & !missing(s930b)
 label var health_facility_alone "Can go to health facility alone"
 
 gen own_money = w124==1 if round==3 & !missing(w124)
-replace own_money = s930==1 if round==4 & !missing(s930)
-replace own_money = s932==1 if round==5 & !missing(s932)
+replace own_money = s927==1 if round==4 & !missing(s930)
+replace own_money = s929==1 if round==5 & !missing(s932)
 label var own_money "Has money she can decide how to use"
 
-gen healthdecide_alone = v743a==1 & !missing(v743a)
-gen healthdecide_whusb = v743a==2 & !missing(v743a)
-gen healthdecide_husband = v743a==4 & !missing(v743a)
-gen healthdecide_else = v743a==5 & !missing(v743a)
-gen healthdecide_other = v743a==6 & !missing(v743a)
+gen healthdecide_alone = v743a==1 if !missing(v743a)
+gen healthdecide_whusb = v743a==2 if !missing(v743a)
+gen healthdecide_husband = v743a==4 if !missing(v743a)
+gen healthdecide_else = v743a==5 if !missing(v743a)
+gen healthdecide_other = v743a==6 if !missing(v743a)
 
 label variable healthdecide_alone "own healthcare: Respondent alone"
 label variable healthdecide_whusb "own healthcare: Respondent + husband"
@@ -531,7 +531,7 @@ label variable dv_section_incomplete "Couldn't answer DV section"
 egen physical_dv = anymatch(d105a-d105j), values(1 2)
 label variable physical_dv "Experienced physical violence in last 12 months"
 
-gen afraidof_husband = inlist(d129,1,2) & !missing(d129)
+gen afraidof_husband = inlist(d129,1,2) if !missing(d129)
 label variable afraidof_husband "Afraid of husband some or most of the time"
 
 gen mobile_phone = s932 if round==5
