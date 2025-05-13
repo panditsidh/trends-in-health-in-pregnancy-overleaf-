@@ -284,6 +284,7 @@ replace noliving = . if v218==.
 
 ********** 7 predictor of pregnancy: urban/rural **********
 gen urban = v025 == 1
+gen rural = v025==2
 
 ********** 8 predictor of pregnancy: has a living boy **********
 gen hasboy = v202 >0 & v202!=.
@@ -385,7 +386,6 @@ gen round=5 if round5==1
 replace round=4 if round4==1
 replace round=3 if round3==1
 
-
 label define roundlbl 3 "NFHS-3 (2005-2006)" 4 "NFHS-4 (2015-2016)" 5 "NFHS-5 (2019-2021)"
 label values round roundlbl
 
@@ -433,6 +433,16 @@ replace region = 5 if inlist(v024, 1, 2, 3, 5, 6, 8) & round == 3 // J&K, HP, Pu
 replace region = 6 if inlist(v024, 28, 29, 32, 33) & round == 3 // AP, Karnataka, Kerala, TN
 replace region = 7 if inlist(v024, 12, 13, 14, 15, 16, 18) & round == 3 // NE states
 
+gen india=1
+gen focus = region==1
+gen central = region==2
+gen east = region==3
+gen west = region==4
+gen north = region==5
+gen south = region==6
+gen northeast = region==7
+
+
 * Step 6: Apply value labels
 label values region regionlbl
 
@@ -467,6 +477,13 @@ label define grouplbl ///
     6 "Sikh, Jain, Christian"
 
 label values group grouplbl
+
+gen forward = group==1
+gen obc = group==2
+gen dalit = group==3
+gen adivasi = group==4
+gen muslim = group==5
+gen sikh_jain_christian = group==6
 
 
 *Calculate weights
