@@ -27,7 +27,6 @@ svyset psu [pw=wt], strata(strata)
 
 
 gen full_term_date = v008+(9-mopreg)
-
 gen birth_interval = full_term_date-v211
 
 
@@ -44,6 +43,16 @@ foreach r in 3 4 5 {
     keep if round == `r'
 
     local i = 1
+	
+	svy: mean birth_interval
+    matrix m = r(table)
+    matrix mean = m[1,1]'
+    matrix lb   = m[5,1]'
+    matrix ub   = m[6,1]'
+    matrix m_ci_`i' = mean , lb , ub
+    matrix colnames m_ci_`i' = Mean_`r' LB_`r' UB_`r'
+    local ++i
+	
     foreach var of local overvars {
 
         svy: mean birth_interval, over(`var')
@@ -60,7 +69,8 @@ foreach r in 3 4 5 {
     }
 
     * Stack for this round
-    matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3
+	matrix rownames m_ci_1 = 1.india
+    matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3 \ m_ci_4
 
     restore
 }
@@ -70,7 +80,7 @@ matrix full_ci = m_ci_round3 , m_ci_round4 , m_ci_round5
 
 * Assign rownames (hardcoded, same for all rounds)
 matrix rownames full_ci = ///
-    Focus Central East West North South Northeast ///
+    India Focus Central East West North South Northeast ///
     Rural Urban ///
     "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
 
@@ -79,9 +89,13 @@ local ncols = colsof(full_ci)
 
 forvalues i = 1/`nrows' {
     forvalues j = 1/`ncols' {
-        matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 0.01)
+        matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 1)
     }
 }	
+
+#delimit ;
+esttab matrix(full_ci),
+    noobs nonumber label;
 
 
 #delimit ;
