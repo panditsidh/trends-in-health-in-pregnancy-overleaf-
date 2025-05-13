@@ -55,11 +55,20 @@ label variable up_bihar "Uttar Pradesh and Bihar"
 eststo clear
 foreach r of numlist 3/5 {
 	
-	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal if round==`r'
+	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal other if round==`r'
 	
 	eststo round_`r'
 	
 }
+
+#delimit ;
+esttab round_3 round_4 round_5, replace
+    cells("sum(fmt(0))") 
+    collabels("N" "%") 
+    mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) 
+	nonumbers
+    label;
+#delimit cr
 
 #delimit ;
 esttab round_3 round_4 round_5 using $out_tex, replace
@@ -67,20 +76,20 @@ esttab round_3 round_4 round_5 using $out_tex, replace
     collabels("N" "%") 
     mgroups("NFHS-3" "NFHS-4" "NFHS-5", pattern(1 1 1)) 
 	nonumbers
+	booktabs
     label;
-
-
+#delimit cr
 
 *** getting % of sample
 
-foreach var in india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal {
+foreach var in india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal other {
 	replace `var' = `var'*100
 }
 
 eststo clear
 foreach r of numlist 3/5 {
 	
-	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal if round==`r' [aw=wt]
+	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal other if round==`r' [aw=wt]
 	
 	eststo round_`r'
 	
