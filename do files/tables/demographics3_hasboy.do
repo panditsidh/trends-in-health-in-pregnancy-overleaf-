@@ -36,6 +36,18 @@ foreach outcome in hasboy bord3_plus bord4_plus {
 		keep if round == `r'
 
 		local i = 1
+		svy: mean `outcome'
+		matrix m = r(table)
+		matrix mean = m[1,1]'
+		matrix lb   = m[5,1]'
+		matrix ub   = m[6,1]'
+		matrix mean = 100 * mean
+		matrix lb   = 100 * lb
+		matrix ub   = 100 * ub
+		matrix m_ci_`i' = mean , lb , ub
+		matrix colnames m_ci_`i' = Mean_`r' LB_`r' UB_`r'
+		local ++i
+		
 		foreach var of local overvars {
 
 			svy: mean `outcome', over(`var')
@@ -56,7 +68,8 @@ foreach outcome in hasboy bord3_plus bord4_plus {
 		}
 
 		* Stack for this round
-		matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3
+		matrix rownames m_ci_1 = 1.india
+		matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3 \ m_ci_4
 
 		restore
 	}
@@ -66,7 +79,7 @@ foreach outcome in hasboy bord3_plus bord4_plus {
 
 	* Assign rownames (hardcoded, same for all rounds)
 	matrix rownames full_ci = ///
-		Focus Central East West North South Northeast ///
+		India Focus Central East West North South Northeast ///
 		Rural Urban ///
 		"Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
 
@@ -77,12 +90,12 @@ foreach outcome in hasboy bord3_plus bord4_plus {
 
 	forvalues i = 1/`nrows' {
 		forvalues j = 1/`ncols' {
-			matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 0.01)
+			matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 1)
 		}
 	}	
 
 	#delimit ;
-	esttab matrix(full_ci), replace
+	esttab matrix(full_ci),
 		title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
 		noobs nonumber label;
 
@@ -96,66 +109,74 @@ foreach outcome in hasboy bord3_plus bord4_plus {
 }
 
 
-
-******* pre fuck up 
-* Loop over rounds
-foreach r in 3 4 5 {
-    
-    preserve
-    keep if round == `r'
-
-    local i = 1
-    foreach var of local overvars {
-
-        svy: mean hasboy, over(`var')
-        matrix m = r(table)
-
-        matrix mean = m[1,1...]'
-        matrix lb   = m[5,1...]'
-        matrix ub   = m[6,1...]'
-		
-		matrix mean = 100 * mean
-		matrix lb   = 100 * lb
-		matrix ub   = 100 * ub
-
-        matrix m_ci_`i' = mean , lb , ub
-        matrix colnames m_ci_`i' = Mean_`r' LB_`r' UB_`r'
-
-        local ++i
-    }
-
-    * Stack for this round
-    matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3
-
-    restore
-}
-
-* Combine all three rounds horizontally
-matrix full_ci = m_ci_round3 , m_ci_round4 , m_ci_round5
-
-* Assign rownames (hardcoded, same for all rounds)
-matrix rownames full_ci = ///
-    Focus Central East West North South Northeast ///
-    Rural Urban ///
-    "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
-
-	
-
-local nrows = rowsof(full_ci)
-local ncols = colsof(full_ci)
-
-forvalues i = 1/`nrows' {
-    forvalues j = 1/`ncols' {
-        matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 0.01)
-    }
-}	
-
-#delimit ;
-esttab matrix(full_ci), replace
-    title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
-    noobs nonumber label;
-
-#delimit ;
-esttab matrix(full_ci) using $out_tex, replace
-    noobs nonumber label booktabs;
-
+//
+// * Loop over rounds
+// foreach r in 3 4 5 {
+//    
+//     preserve
+//     keep if round == `r'
+//
+//     local i = 1
+//	
+// 	svy: mean hasboy
+//     matrix m = r(table)
+//     matrix mean = m[1,1]'
+//     matrix lb   = m[5,1]'
+//     matrix ub   = m[6,1]'
+//     matrix m_ci_`i' = mean , lb , ub
+//     matrix colnames m_ci_`i' = Mean_`r' LB_`r' UB_`r'
+//     local ++i
+//	
+//     foreach var of local overvars {
+//
+//         svy: mean hasboy, over(`var')
+//         matrix m = r(table)
+//
+//         matrix mean = m[1,1...]'
+//         matrix lb   = m[5,1...]'
+//         matrix ub   = m[6,1...]'
+//		
+// 		matrix mean = 100 * mean
+// 		matrix lb   = 100 * lb
+// 		matrix ub   = 100 * ub
+//
+//         matrix m_ci_`i' = mean , lb , ub
+//         matrix colnames m_ci_`i' = Mean_`r' LB_`r' UB_`r'
+//
+//         local ++i
+//     }
+//
+//     * Stack for this round
+//     matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3 \ m_ci_4
+//
+//     restore
+// }
+//
+// * Combine all three rounds horizontally
+// matrix full_ci = m_ci_round3 , m_ci_round4 , m_ci_round5
+//
+// * Assign rownames (hardcoded, same for all rounds)
+// matrix rownames full_ci = ///
+//     India Focus Central East West North South Northeast ///
+//     Rural Urban ///
+//     "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
+//	
+//
+// local nrows = rowsof(full_ci)
+// local ncols = colsof(full_ci)
+//
+// forvalues i = 1/`nrows' {
+//     forvalues j = 1/`ncols' {
+//         matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 1)
+//     }
+// }	
+//
+// #delimit ;
+// esttab matrix(full_ci),
+//     title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
+//     noobs nonumber label;
+//
+// #delimit ;
+// esttab matrix(full_ci) using $out_tex, replace
+//     noobs nonumber label booktabs;
+//

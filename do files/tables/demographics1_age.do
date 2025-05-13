@@ -93,7 +93,7 @@ local ncols = colsof(full_ci)
 
 forvalues i = 1/`nrows' {
     forvalues j = 1/`ncols' {
-        matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 0.01)
+        matrix full_ci[`i', `j'] = round(full_ci[`i', `j'], 0.1)
     }
 }
 
