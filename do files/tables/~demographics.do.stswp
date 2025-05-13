@@ -4,7 +4,7 @@ if "`c(username)'" == "sidhpandit" {
 	
 	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
 	
-	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics.tex"
+	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics1_age.tex"
 
 	
 }
@@ -104,8 +104,7 @@ esttab matrix(full_ci), replace
 
 
 #delimit ;
-esttab matrix(full_ci) using $out_tex, replace fragment
-    title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
+esttab matrix(full_ci) using $out_tex, replace 
 	cells("mean(fmt(2))")
     noobs nonumber label booktabs;
 
