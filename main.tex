@@ -39,6 +39,9 @@ TODO
     
 \end{figure}
 
+The whole distribution of BMI for pre-pregnant women is increasing in subsequent survey rounds. 
+
+Generated cdf using cumul command with pre-pregnancy weights. I am not sure if \textbf{I need to normalize these since I am stacking survey rounds?}
 
 
 \begin{figure}[H]
@@ -48,12 +51,21 @@ TODO
     
 \end{figure}
 
+The whole distribution of BMI for 9+ mo pregnant women is increasing in subsequent survey rounds. \textbf{Should I just use v005, within survey round weights?}
+
+Also, the curves are about equally shifted right relative to the pre-pregnant curves in all survey rounds. 
+
+Generated cdf using cumul command with aweights normalized across all survey rounds.
+
+
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/kdensities ages.png}
     \caption{: Kernel density of the ages of currently pregnant women in NFHS 3, 4, \& 5}
 \end{figure}
+
+The age distribution of currently pregnant women is increasing. Between NFHS-4 and NFHS-5, it seems like it is moreso widening - the peak is only barely shifting right. 
 
 
 \begin{figure}[H]
@@ -62,13 +74,19 @@ TODO
     \caption{: Box plots of the age distributions of currently pregnant women NFHS 3, 4, \& 5}
 \end{figure}
 
+In this figure, it looks like there's less of a change at all in the age distribution of currently pregnant women between NFHS-4 and NFHS-5. 
+
+Just used graph box with aweights normalized across survey rounds. 
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/bar graph number of children.png}
     \caption{: Bar graph of number of living children among currently pregnant women in the NFHS 3, 4, \& 5}
 \end{figure}
 
+Less women are giving birth at higher parities - largely parity 4+, and there is less change happening at just parity 3. But significantly more births are happening at parities 1 and 2.
 
+Generated using hbar and v005 aweights - within survey round.
 
 \begin{table}[H]
     \centering
@@ -76,6 +94,10 @@ TODO
     \label{tab:sumstat}
     \adjustbox{width=\textwidth}{\input{tables/table_of_gestational_duration}}
 \end{table}
+
+
+
+There is also a large difference at 9 months in NFHS-3 that also becomes much smaller in later survey rounds.
 
 
 
@@ -213,10 +235,10 @@ Interpretation: women are more able to decide despite social pressure of having 
     \centering
     \setlength{\tabcolsep}{4pt} % shrink column padding
     \footnotesize % shrink text
-    \caption{: Summary stats for women who are 3+ months pregnant}
+    \caption{: Percent of current pregnancies wanted at this time for women who are 3+ months pregnant}
     \label{tab:sumstat}
     \begin{adjustbox}{width=\textwidth}
-        \input{tables/summary_stats}
+        \input{tables/mental_health}
     \end{adjustbox}
 \end{table}
 
