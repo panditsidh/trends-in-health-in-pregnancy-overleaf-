@@ -28,10 +28,11 @@
 
 \maketitle
 
-
-
 TODO
 - add short note after each figure/table and about how it was generated
+
+\section{CDF of pre-pregnancy BMI}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/cdf prepregnancy bmi.png}
@@ -43,6 +44,7 @@ The whole distribution of BMI for pre-pregnant women is increasing in subsequent
 
 Generated cdf using cumul command with pre-pregnancy weights. I am not sure if \textbf{I need to normalize these since I am stacking survey rounds?}
 
+\section{CDF of 9+ mo pregnant BMI}
 
 \begin{figure}[H]
     \centering
@@ -57,7 +59,7 @@ Also, the curves are about equally shifted right relative to the pre-pregnant cu
 
 Generated cdf using cumul command with aweights normalized across all survey rounds.
 
-
+\section{CDF and boxplot of age}
 
 \begin{figure}[H]
     \centering
@@ -66,7 +68,6 @@ Generated cdf using cumul command with aweights normalized across all survey rou
 \end{figure}
 
 The age distribution of currently pregnant women is increasing. Between NFHS-4 and NFHS-5, it seems like it is moreso widening - the peak is only barely shifting right. 
-
 
 \begin{figure}[H]
     \centering
@@ -78,6 +79,8 @@ In this figure, it looks like there's less of a change at all in the age distrib
 
 Just used graph box with aweights normalized across survey rounds. 
 
+\section{Bar graph of parity}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/bar graph number of children.png}
@@ -88,6 +91,8 @@ Less women are giving birth at higher parities - largely parity 4+, and there is
 
 Generated using hbar and v005 aweights - within survey round.
 
+\section{Distribution of gestational duration}
+
 \begin{table}[H]
     \centering
     \caption{: Proportion of pregnant women by gestational duration in the NFHS 3, 4, \& 5}
@@ -95,11 +100,13 @@ Generated using hbar and v005 aweights - within survey round.
     \adjustbox{width=\textwidth}{\input{tables/table_of_gestational_duration}}
 \end{table}
 
+Women reporting they're currently pregnant at 1mo is decreasing after NFHS-4? 
+Doesn't seem like there's much of a pattern in the discrepancies?
+Decline at 9 months - maybe due to an increase in induced pregnancies?
 
+Generated using the sum command with v005 aweights - within survey round.
 
-There is also a large difference at 9 months in NFHS-3 that also becomes much smaller in later survey rounds.
-
-
+\section{Wanted pregnancies}
 
 \begin{table}[H]
     \centering
@@ -108,16 +115,24 @@ There is also a large difference at 9 months in NFHS-3 that also becomes much sm
     \adjustbox{width=\textwidth}{\input{tables/pregnancies_wanted}}
 \end{table}
 
+More women report they wanted their current pregnancy at all parities. 
 
-TODO: 
-- make sure it's only non-pregnant women.
+Generated using sum command and v005 aweights within survey round. 
+
+\section{Modern contraception}
+
 \begin{table}[H]
     \centering
-    \caption{: Proportion of married women using modern contraception in the NFHS 3, 4, \& 5}
+    \caption{: Proportion of married non-pregnant women using modern contraception in the NFHS 3, 4, \& 5}
     \label{tab:sumstat}
     \adjustbox{width=\textwidth}{\input{tables/modern_contraception}}
 \end{table}
-Interpretation: women are more able to decide despite social pressure of having a boy/child
+
+More women are using modern contraception regardless of their birth history/ sex ratio.
+
+Modern method defined according to the reweighting code. Generated using sum command and v005 aweights within survey round. 
+
+\section{Ultrasound}
 
 \begin{figure}[H]
     \centering
@@ -125,14 +140,20 @@ Interpretation: women are more able to decide despite social pressure of having 
     \caption{: Proportion of pregnant women who have had an ultrasound by gestational duration in NFHS 4, \& 5}
 \end{figure}
 
+Women are having ultrasounds earlier during pregnancy. Also, the proportion of women having ultrasounds at all is about the same.
 
+Generated using s236 "Ultrasound at any time".
+Collapsed the data to mopreg round using v005 aweights. 
+Then I calculated total with ultrasound/ full total at each mopreg round.
 
+\section{Pregnancy reporting}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tables/says pregnant by gestational duration.png}
     \caption{: Proportion of women who report not being pregnant by months since last period in the NFHS 4, \& 5}
 \end{figure}
+
 
 
 
