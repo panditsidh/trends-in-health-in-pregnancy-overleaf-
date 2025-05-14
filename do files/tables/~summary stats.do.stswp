@@ -7,18 +7,22 @@ if "`c(username)'" == "sidhpandit" {
 	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/summary_stats.tex"
 }
 
-use $ir_combined, clear
+use $ihr_pregnant, clear
+
+gen nuclear8mo = nuclear if mopreg>=8
+gen sasural8mo = sasural if mopreg>=8
+gen natal8mo = natal if mopreg>=8
 
 keep if v213==1 & mopreg>=3
 replace strata = 137 if strata==138
 svyset psu [pw=wt], strata(strata) singleunit(centered)
 
-foreach var in educ_none educ_primary educ_secondary educ_higher husband_away1mo husband_away6mo healthdecide_alone healthdecide_whusb healthdecide_husband healthdecide_else healthdecide_other own_money mobile_phone health_facility_alone dv_section_incomplete physical_dv afraidof_husband {
+foreach var in educ_none educ_primary educ_secondary educ_higher husband_away1mo husband_away6mo healthdecide_alone healthdecide_whusb healthdecide_husband healthdecide_else healthdecide_other own_money mobile_phone health_facility_alone dv_section_incomplete physical_dv afraidof_husband nuclear sasural natal nuclear8mo sasural8mo natal8mo {
 	
 	replace `var' = `var' *100
 }
 
-local varlist v012 v133 educ_none educ_primary educ_secondary educ_higher husband_away1mo husband_away6mo healthdecide_alone healthdecide_whusb healthdecide_husband healthdecide_else healthdecide_other own_money mobile_phone health_facility_alone dv_section_incomplete physical_dv afraidof_husband
+local varlist v012 v133 educ_none educ_primary educ_secondary educ_higher husband_away1mo husband_away6mo healthdecide_alone healthdecide_whusb healthdecide_husband healthdecide_else healthdecide_other own_money mobile_phone health_facility_alone dv_section_incomplete physical_dv afraidof_husband nuclear sasural natal nuclear8mo sasural8mo natal8mo
 
 
 * Set up result matrix
@@ -68,7 +72,13 @@ matrix rownames results = ///
 "Can visit health facility" ///
 "DV section incomplete" ///
 "Experienced physical DV" ///
-"Afraid of husband"
+"Afraid of husband" ///
+"Observed in nuclear family" ///
+"Observed in sasural" ///
+"Observed in meica" /// 
+"Observed in nuclear (8+ mo preg)" ///
+"Observed in sasural (8+ mo preg)" ///
+"Observed in natal (8+ mo preg)" ///
 
 matrix colnames results = mean3 ll3 ul3 mean4 ll4 ul4 mean5 ll5 ul5
 
@@ -87,7 +97,8 @@ forvalues i = 1/`nrows' {
 #delimit ;
 esttab matrix(results),
 	cells("mean(fmt(2))")
-    noobs nonumber label;
+    noobs nonumber label;	
+
 
 #delimit ;
 esttab matrix(results) using $out_tex, replace 

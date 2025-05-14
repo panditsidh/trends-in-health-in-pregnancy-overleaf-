@@ -94,12 +94,12 @@ if `x'==3 {
 
 
 if `x'==4 {
-	use caseid s928b s930 s927 v743a* v044 d* s907 s908 s116 v* s236 s220b* using $nfhs_ir	
+	use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* using $nfhs_ir	
 }
 
 
 if `x'==5 {
-	use caseid s930b s932 s929 v743a* v044 d* s909 s910 s920 s116 v* s236 s220b* using $nfhs_ir	
+	use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* using $nfhs_ir	
 }
 
 
