@@ -77,11 +77,23 @@ foreach r of numlist 3/5 {
 
 local labels `" "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "'
 
+
 #delimit ;
-esttab model_mopreg3 model_mopreg4 model_mopreg5 model_moperiod3 model_moperiod4 model_moperiod5 using $outtex_github,
+esttab model_mopreg3 model_moperiod3 model_mopreg4 model_moperiod4 model_mopreg5 model_moperiod5,
 	replace
 	stats(prop_1 prop_2 prop_3 prop_4 prop_5 prop_6 prop_7
-	prop_8 prop_9 prop_10 prop_11, labels(`labels'))
+	prop_8 prop_9 prop_10 prop_11, labels(`labels') fmt(2))
+	drop(v213 _cons)
+	nonumbers nostar noobs not
+	mtitles("Mopreg" "Moperiod" "Mopreg" "Moperiod" "Mopreg" "Moperiod")
+	mgroups("NFHS-3 (2005-2006)" "NFHS-4 (2015-2016)" "NFHS-5 (2019-2021)", pattern(1 0 1 0 1 0) )
+	addnotes("Mopreg refers to respondents self reported gestational duration. Moperiod refers months since last menstrual period.");
+
+#delimit ;
+esttab model_mopreg3 model_moperiod3 model_mopreg4 model_moperiod4 model_mopreg5 model_moperiod5 using $outtex_github,
+	replace
+	stats(prop_1 prop_2 prop_3 prop_4 prop_5 prop_6 prop_7
+	prop_8 prop_9 prop_10 prop_11, labels(`labels') fmt(2))
 	drop(v213 _cons)
 	nonumbers nostar noobs not
 	mtitles("Mopreg" "Moperiod" "Mopreg" "Moperiod" "Mopreg" "Moperiod")
