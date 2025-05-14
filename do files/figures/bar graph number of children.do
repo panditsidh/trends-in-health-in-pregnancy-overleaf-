@@ -7,10 +7,6 @@ if "`c(username)'" == "sidhpandit" {
 
 use $ir_combined, clear
 
-label define roundlbl 3 "NFHS-3 (2005-2006)" 4 "NFHS-4 (2015-2016)" 5 "NFHS-5 (2019-2021)"
-label values round roundlbl
-
-
 gen parity_1 = v219==1
 gen parity_2 = v219==2
 gen parity_3 = v219==3

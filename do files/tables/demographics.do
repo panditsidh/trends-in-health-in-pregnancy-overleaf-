@@ -17,13 +17,6 @@ keep if v213==1
 replace strata = 137 if strata==138
 svyset psu [pw=wt], strata(strata)
 
-svy: mean v012, over(region)
-
-
-
-svy: mean v012, over(v102)
-svy: mean v012, over(group)
-
 * Define over groups
 local overvars region v102 group
 

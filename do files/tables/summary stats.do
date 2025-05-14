@@ -9,7 +9,6 @@ if "`c(username)'" == "sidhpandit" {
 
 use $ihr_pregnant, clear
 
-
 gen nuclear8mo = nuclear if mopreg>=8
 gen sasural8mo = sasural if mopreg>=8
 gen natal8mo = natal if mopreg>=8

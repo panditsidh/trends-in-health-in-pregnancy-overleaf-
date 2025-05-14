@@ -14,9 +14,6 @@ if "`c(username)'" == "sidhpandit" {
 *** test comment 
 use $ihr_pregnant, clear
 
-gen india=1
-gen rural=v025==2 
-
 keep if mopreg>=3
 
 gen natal_usual = natal==1 & v135==1
