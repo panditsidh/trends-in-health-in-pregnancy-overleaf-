@@ -493,6 +493,15 @@ gen dalit = group==3
 gen adivasi = group==4
 gen muslim = group==5
 gen sikh_jain_christian = group==6
+gen other_group = missing(group)
+
+label var forward "Forward"
+label var obc "OBC"
+label var dalit "Dalit"
+label var adivasi "Adivasi"
+label var muslim "Muslim"
+label var sikh_jain_christian "Sikh, Jain or Christian"
+label var other_group "Other social group"
 
 
 gen husband_away1mo = s907 if round==4
