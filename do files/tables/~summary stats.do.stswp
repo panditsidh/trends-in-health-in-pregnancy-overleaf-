@@ -83,9 +83,9 @@ matrix rownames results = ///
 "Household structure: Observed in nuclear family" ///
 "Household structure: Observed in sasural" ///
 "Household structure: Observed in meica" /// 
-"Household structure (parity 1 & 2): Observed in nuclear" ///
-"Household structure (parity 1 & 2): Observed in sasural" ///
-"Household structure (parity 1 & 2): Observed in natal" ///
+"Household structure (parity 1 and 2): Observed in nuclear" ///
+"Household structure (parity 1 and 2): Observed in sasural" ///
+"Household structure (parity 1 and 2): Observed in natal" ///
 "Household structure (8+ mo preg): Observed in nuclear" ///
 "Household structure (8+ mo preg): Observed in sasural" ///
 "Household structure (8+ mo preg): Observed in natal" ///
