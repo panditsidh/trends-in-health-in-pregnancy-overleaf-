@@ -89,12 +89,17 @@ foreach x of numlist 3/5 {
 clear all
 
 if `x'==3 {
-	use caseid s46* v*  using $nfhs_ir	
+	use caseid s824b w124 v044 d* s46* v*  using $nfhs_ir	
 }
 
 
-else {
-	use caseid s46* v* s236 s220b* using $nfhs_ir	
+if `x'==4 {
+	use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* using $nfhs_ir	
+}
+
+
+if `x'==5 {
+	use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* using $nfhs_ir	
 }
 
 
@@ -169,6 +174,15 @@ replace modernmethod = 1 if answer>0 & answer <8
 gen lessedu= (v106==0| v106==1)
 replace lessedu = . if v106==.
 
+gen educ_none      = v106 == 0  // no education
+gen educ_primary   = v106 == 1  // primary
+gen educ_secondary = v106 == 2  // secondary
+gen educ_higher    = v106 == 3  // higher
+
+label var educ_none      "No education"
+label var educ_primary   "Primary education"
+label var educ_secondary "Secondary education"
+label var educ_higher    "Higher education"
 
 
 ********** 3 predictor of pregnancy: age in 10 year groups **********
@@ -279,6 +293,7 @@ replace noliving = . if v218==.
 
 ********** 7 predictor of pregnancy: urban/rural **********
 gen urban = v025 == 1
+gen rural = v025==2
 
 ********** 8 predictor of pregnancy: has a living boy **********
 gen hasboy = v202 >0 & v202!=.
@@ -380,13 +395,157 @@ gen round=5 if round5==1
 replace round=4 if round4==1
 replace round=3 if round3==1
 
-
 label define roundlbl 3 "NFHS-3 (2005-2006)" 4 "NFHS-4 (2015-2016)" 5 "NFHS-5 (2019-2021)"
 label values round roundlbl
 
 
 gen bmi = v445 if v445!=9998 & v445!= 9999
 replace bmi = bmi/100
+
+* Step 1: Define region value labels
+label define regionlbl ///
+    1 "focus" ///
+    2 "central" ///
+    3 "east" ///
+    4 "west" ///
+    5 "north" ///
+    6 "south" ///
+    7 "northeast"
+
+* Step 2: Generate the numeric variable
+gen region = .
+
+* Step 3: NFHS-5 (round == 5)
+replace region = 1 if inlist(v024, 9, 10) & round == 5 // UP, Bihar
+replace region = 2 if inlist(v024, 23, 22) & round == 5 // MP, Chhattisgarh
+replace region = 3 if inlist(v024, 19, 20, 21) & round == 5 // WB, Jharkhand, Odisha
+replace region = 4 if inlist(v024, 24, 27, 30) & round == 5 // Gujarat, Maharashtra, Goa
+replace region = 5 if inlist(v024, 1, 2, 3, 5, 6, 8) & round == 5 // J&K, HP, Punjab, Uttarakhand, Haryana, Rajasthan
+replace region = 6 if inlist(v024, 28, 29, 32, 33, 36) & round == 5 // AP, Karnataka, Kerala, TN, Telangana
+replace region = 7 if inlist(v024, 12, 13, 14, 15, 16, 18) & round == 5 // NE states
+
+* Step 4: NFHS-4 (round == 4)
+replace region = 1 if inlist(v024, 33, 5) & round == 4 // UP, Bihar
+replace region = 2 if inlist(v024, 19, 7) & round == 4 // MP, Chhattisgarh
+replace region = 3 if inlist(v024, 35, 15, 26) & round == 4 // WB, Jharkhand, Odisha
+replace region = 4 if inlist(v024, 11, 20, 10) & round == 4 // Gujarat, Maharashtra, Goa
+replace region = 5 if inlist(v024, 14, 13, 28, 12, 34, 6) & round == 4 // J&K, HP, Punjab, Uttarakhand, Delhi, Haryana
+replace region = 6 if inlist(v024, 2, 36, 17, 31, 16) & round == 4 // AP, Telangana, Kerala, TN, Karnataka
+replace region = 7 if inlist(v024, 3, 23, 24, 21, 32, 22, 4, 30) & round == 4 // NE states
+
+* Step 5: NFHS-3 (round == 3)
+replace region = 1 if inlist(v024, 9, 10) & round == 3 // UP, Bihar
+replace region = 2 if inlist(v024, 23, 22) & round == 3 // MP, Chhattisgarh
+replace region = 3 if inlist(v024, 19, 20, 21) & round == 3 // WB, Jharkhand, Odisha
+replace region = 4 if inlist(v024, 24, 27, 30) & round == 3 // Gujarat, Maharashtra, Goa
+replace region = 5 if inlist(v024, 1, 2, 3, 5, 6, 8) & round == 3 // J&K, HP, Punjab, Uttarakhand, Haryana, Rajasthan
+replace region = 6 if inlist(v024, 28, 29, 32, 33) & round == 3 // AP, Karnataka, Kerala, TN
+replace region = 7 if inlist(v024, 12, 13, 14, 15, 16, 18) & round == 3 // NE states
+
+gen india=1
+gen focus = region==1
+gen central = region==2
+gen east = region==3
+gen west = region==4
+gen north = region==5
+gen south = region==6
+gen northeast = region==7
+
+
+* Step 6: Apply value labels
+label values region regionlbl
+
+
+* Step 1: Create the variable
+gen group = .
+
+* Step 2: Hindus by caste
+* NFHS-3: caste in s46, religion in v130
+replace group = 1 if v130 == 1 & s46 == 4 & round == 3 // Forward Caste
+replace group = 2 if v130 == 1 & s46 == 3 & round == 3 // OBC
+replace group = 3 if v130 == 1 & s46 == 1 & round == 3 // Dalit
+replace group = 4 if v130 == 1 & s46 == 2 & round == 3 // Adivasi
+
+* NFHS-4/5: caste in s116, religion in v130
+replace group = 1 if v130 == 1 & s116 == 4 & inlist(round, 4, 5) // Forward Caste
+replace group = 2 if v130 == 1 & s116 == 3 & inlist(round, 4, 5) // OBC
+replace group = 3 if v130 == 1 & s116 == 1 & inlist(round, 4, 5) // Dalit
+replace group = 4 if v130 == 1 & s116 == 2 & inlist(round, 4, 5) // Adivasi
+
+* Step 3: Non-Hindu religion dominates
+replace group = 5 if v130 == 2  // Muslim
+replace group = 6 if inlist(v130, 3, 4, 6) // Christian, Sikh, Jain
+
+* Step 4: Assign label
+label define grouplbl ///
+    1 "Forward Caste" ///
+    2 "OBC" ///
+    3 "Dalit" ///
+    4 "Adivasi" ///
+    5 "Muslim" ///
+    6 "Sikh, Jain, Christian"
+
+label values group grouplbl
+
+gen forward = group==1
+gen obc = group==2
+gen dalit = group==3
+gen adivasi = group==4
+gen muslim = group==5
+gen sikh_jain_christian = group==6
+gen other_group = missing(group)
+
+label var forward "Forward"
+label var obc "OBC"
+label var dalit "Dalit"
+label var adivasi "Adivasi"
+label var muslim "Muslim"
+label var sikh_jain_christian "Sikh, Jain or Christian"
+label var other_group "Other social group"
+
+
+gen husband_away1mo = s907 if round==4
+replace husband_away1mo = s909 if round==5
+label var husband_away1mo "Husband away for 1+ mo. in last year"
+
+gen husband_away6mo = s908 if round==4
+replace husband_away6mo = s910 if round==5
+label var husband_away6mo "Husband away for 6+ mo. in last year"
+
+gen health_facility_alone = s824b==1 if round==3 & !missing(s824b)
+replace health_facility_alone = s928b==1 if round==4 & !missing(s928b)
+replace health_facility_alone = s930b==1 if round==5 & !missing(s930b)
+label var health_facility_alone "Can go to health facility alone"
+
+gen own_money = w124==1 if round==3 & !missing(w124)
+replace own_money = s927==1 if round==4 & !missing(s930)
+replace own_money = s929==1 if round==5 & !missing(s932)
+label var own_money "Has money she can decide how to use"
+
+gen healthdecide_alone = v743a==1 if !missing(v743a)
+gen healthdecide_whusb = v743a==2 if !missing(v743a)
+gen healthdecide_husband = v743a==4 if !missing(v743a)
+gen healthdecide_else = v743a==5 if !missing(v743a)
+gen healthdecide_other = v743a==6 if !missing(v743a)
+
+label variable healthdecide_alone "own healthcare: Respondent alone"
+label variable healthdecide_whusb "own healthcare: Respondent + husband"
+label variable healthdecide_husband "own healthcare: Husband alone"
+label variable healthdecide_else "own healthcare: Someone else"
+label variable healthdecide_other "own healthcare: Other"
+
+gen dv_section_incomplete = inlist(v044, 2,3) & v044!=0
+label variable dv_section_incomplete "Couldn't answer DV section"
+
+egen physical_dv = anymatch(d105a-d105j), values(1 2)
+label variable physical_dv "Experienced physical violence in last 12 months"
+
+gen afraidof_husband = inlist(d129,1,2) if !missing(d129)
+label variable afraidof_husband "Afraid of husband some or most of the time"
+
+gen mobile_phone = s932 if round==5
+replace mobile_phone = s930 if round==4
+label variable mobile_phone "Has own mobile phone"
 
 
 *Calculate weights

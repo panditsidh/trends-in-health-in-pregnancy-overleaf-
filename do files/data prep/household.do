@@ -69,6 +69,8 @@ egen wid_round = group(v000 caseid)
 preserve
 keep if v213==1
 
+gen household_structure = .
+
 gen nuclear = 0
 gen sasural = 0
 gen natal = 0
@@ -81,6 +83,7 @@ gen bahu = 0
 
 gen mother = 0
 gen father = 0
+gen other = 0
 
 *-------------------------------------------------------------
 * Loop over other household members
@@ -100,8 +103,12 @@ forvalues i = 2/41 {
     replace bhai        = 1 if v150==2 & hv101_`j'==8
     replace bahu = 1 if v150==2 & hv101_`j'==15 & hv104_`j'==2
 
-    * household head is parent
-    replace natal = 1 if v150==3
+    * woman is household head, but not nuclear
+	replace mother = 1 if hv101_`j'==6 & hv104_`j'==2 & v150==1
+	replace father = 1 if hv101_`j'==6 & hv104_`j'==1 & v150==1
+	
+	* household head is parent
+    replace natal = 1 if v150==3 | v150==11
 	replace mother = 1 if v151==2 & v150==3
 	replace father = 1 if v151==2 & v150==3
 
@@ -112,6 +119,9 @@ forvalues i = 2/41 {
 
     replace bhai = 1 if v150==4 & hv101_`j'==3 & v034 != `i'
     replace bahu = 1 if v150==4 & hv101_`j'==4 & hv104_`j'==2
+	
+	
+	
 
     * woman is household head
     replace mother = 1 if v150==1 & hv101_`j'==6 & hv104_`j'==2
@@ -124,6 +134,17 @@ forvalues i = 2/41 {
 * Define nuclear: woman is head or spouse, and no in-laws present
 *-------------------------------------------------------------
 replace nuclear = 1 if inlist(v150,1,2) & mil == 0 & fil == 0 & mother==0 & father==0
+
+
+* household head is woman's sibling in law
+replace sasural = 1 if v150==15
+
+* household head is grandparent
+replace natal = 1 if v150==5
+
+* household head is woman's child/stepchild, uncle/aunt, other
+replace other = 1 if inlist(v150, 6, 7, 10, 12, 16, 17)
+
 
 label variable nuclear         "Observed in nuclear"
 label variable sasural         "Observed in sasural"
@@ -138,8 +159,23 @@ label variable fil             "Observed in father-in-law's home"
 // label variable nuclear_head    "Nuclear HH – Woman is head"
 // label variable nuclear_husband "Nuclear HH – Husband is head"
 
-
 save $ihr_pregnant, replace
+
+
+/*
+
+unhandled cases
+- woman is the household head, parents are present (natal?)
+- woman's grandparent is the household head (natal)
+- woman's child/stepchild/niece/nephew is the household head (?)
+- someone unrelated to woman is household head (other)
+- woman's sibling is household head (natal?)
+- woman's sibling-in-law is household head (sasural?)
+- woman is "domestic worker" (other)
+
+
+*/
+
 
 
 restore

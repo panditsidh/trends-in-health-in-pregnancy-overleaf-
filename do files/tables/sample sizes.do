@@ -14,6 +14,11 @@ if "`c(username)'" == "sidhpandit" {
 *** test comment 
 use $ihr_pregnant, clear
 
+drop other_group
+gen other_group = missing(group)
+label var other_group "Other social group"
+
+
 keep if mopreg>=3
 
 gen natal_usual = natal==1 & v135==1
@@ -52,7 +57,7 @@ label variable up_bihar "Uttar Pradesh and Bihar"
 eststo clear
 foreach r of numlist 3/5 {
 	
-	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal other if round==`r'
+	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian other_group nuclear sasural natal other if round==`r'
 	
 	eststo round_`r'
 	
@@ -79,14 +84,14 @@ esttab round_3 round_4 round_5 using $out_tex, replace
 
 *** getting % of sample
 
-foreach var in india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal other {
+foreach var in india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian other_group nuclear sasural natal other {
 	replace `var' = `var'*100
 }
 
 eststo clear
 foreach r of numlist 3/5 {
 	
-	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian nuclear sasural natal other if round==`r' [aw=wt]
+	estpost sum india focus central east west north south northeast rural urban forward obc dalit adivasi muslim sikh_jain_christian other_group nuclear sasural natal other if round==`r' [aw=wt]
 	
 	eststo round_`r'
 	
@@ -111,8 +116,6 @@ esttab round_3 round_4 round_5 using $out_tex2, replace
 	booktabs;
 
 
-
-	
 
 
 	

@@ -504,12 +504,15 @@ label var sikh_jain_christian "Sikh, Jain or Christian"
 label var other_group "Other social group"
 
 
+* husband away 6 mo is only asked for women who say yes to husband away 1 month
+
 gen husband_away1mo = s907 if round==4
 replace husband_away1mo = s909 if round==5
 label var husband_away1mo "Husband away for 1+ mo. in last year"
 
 gen husband_away6mo = s908 if round==4
 replace husband_away6mo = s910 if round==5
+replace husband_away6mo = 0 if husband_away1mo==0
 label var husband_away6mo "Husband away for 6+ mo. in last year"
 
 gen health_facility_alone = s824b==1 if round==3 & !missing(s824b)
@@ -547,6 +550,16 @@ gen mobile_phone = s932 if round==5
 replace mobile_phone = s930 if round==4
 label variable mobile_phone "Has own mobile phone"
 
+
+gen currently_working = v714==1 if !missing(v714)
+label variable currently_working "Currently working"
+
+gen any_work = inlist(v731,1,2,3) if !missing(v731)
+label variable any_work "Worked in last 12 months"
+
+* paid work is only asked for any_work ==1
+gen paid_work = inlist(v741,1,2,3) if !missing(v741)
+label variable paid_work "Paid in cash or in-kind for work"
 
 *Calculate weights
 egen strata = group(v000 v024 v025) 

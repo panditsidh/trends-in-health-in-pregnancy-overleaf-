@@ -30,6 +30,16 @@ foreach r of numlist 3/5 {
 local labels `" "No living boy child" "No children" "'
 
 #delimit ;
+esttab round3 round4 round5, 
+	replace
+    stats(no_boy no_child, labels(`labels')) 
+    drop(v213 _cons)
+    mtitle("NFHS-3 (2005–2006)" "NFHS-4 (2015–2016)" "NFHS-5 (2019–2021)") 
+    nonumbers nostar noobs not;
+#delimit cr
+
+
+#delimit ;
 esttab round3 round4 round5 using $out_github, 
 	replace
     stats(no_boy no_child, labels(`labels')) 
