@@ -22,7 +22,7 @@ foreach var in educ_none educ_primary educ_secondary educ_higher husband_away1mo
 	replace `var' = `var' *100
 }
 
-local varlist v012 v133 educ_none educ_primary educ_secondary educ_higher husband_away1mo husband_away6mo currently_working any_work paid_work healthdecide_alone healthdecide_whusb healthdecide_husband healthdecide_else healthdecide_other health_facility_alone own_money mobile_phone  dv_section_incomplete physical_dv afraidof_husband nuclear sasural natal nuclear8mo sasural8mo natal8mo
+local varlist v012 v133 educ_none educ_primary educ_secondary educ_higher husband_away1mo husband_away6mo currently_working any_work paid_work healthdecide_alone healthdecide_whusb healthdecide_husband healthdecide_else healthdecide_other own_money mobile_phone health_facility_alone dv_section_incomplete physical_dv afraidof_husband nuclear sasural natal nuclear8mo sasural8mo natal8mo
 
 
 * Set up result matrix
@@ -75,7 +75,7 @@ matrix rownames results = ///
 "Has own: mobile phone" ///
 "Domestic Violence: DV section incomplete" ///
 "Domestic Violence: Experienced physical DV" ///
-"Domestic Violence: Afraid of husband" ///
+"Afraid of husband" ///
 "Household structure: Observed in nuclear family" ///
 "Household structure: Observed in sasural" ///
 "Household structure: Observed in meica" /// 
