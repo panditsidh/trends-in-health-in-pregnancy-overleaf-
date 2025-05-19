@@ -13,6 +13,10 @@ gen nuclear8mo = nuclear if mopreg>=8
 gen sasural8mo = sasural if mopreg>=8
 gen natal8mo = natal if mopreg>=8
 
+gen nuclear_parity12 = nuclear if 
+gen nuclear_parity12
+gen nuclear_parity12
+
 keep if v213==1 & mopreg>=3
 replace strata = 137 if strata==138
 svyset psu [pw=wt], strata(strata) singleunit(centered)
