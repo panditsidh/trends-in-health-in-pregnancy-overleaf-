@@ -518,6 +518,9 @@ gen husband_away6mo = s908 if round==4
 replace husband_away6mo = s910 if round==5
 replace husband_away6mo = 0 if husband_away1mo==0
 replace husband_away6mo = . if husband_away1mo==.
+
+tab husband_away6mo, m
+
 label var husband_away6mo "Husband away for 6+ mo. in last year"
 
 gen health_facility_alone = s824b==1 if round==3 & !missing(s824b)
