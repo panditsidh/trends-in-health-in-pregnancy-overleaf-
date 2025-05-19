@@ -507,12 +507,17 @@ label var other_group "Other social group"
 * husband away 6 mo is only asked for women who say yes to husband away 1 month
 
 gen husband_away1mo = s907 if round==4
+tab husband_away1mo, m if nfhs4==1
+
 replace husband_away1mo = s909 if round==5
-label var husband_away1mo "Husband away for 1+ mo. in last year"
+tab husband_away1mo, m if nfhs5==1
+
+label var husband_away1mo "Husband away for 1+ month in last year"
 
 gen husband_away6mo = s908 if round==4
 replace husband_away6mo = s910 if round==5
 replace husband_away6mo = 0 if husband_away1mo==0
+replace husband_away6mo = . if husband_away1mo==.
 label var husband_away6mo "Husband away for 6+ mo. in last year"
 
 gen health_facility_alone = s824b==1 if round==3 & !missing(s824b)
