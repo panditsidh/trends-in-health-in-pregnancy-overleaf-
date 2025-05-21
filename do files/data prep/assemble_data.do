@@ -94,12 +94,12 @@ if `x'==3 {
 
 
 if `x'==4 {
-	use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* using $nfhs_ir	
+	use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* ssmod using $nfhs_ir	
 }
 
 
 if `x'==5 {
-	use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* using $nfhs_ir	
+	use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* ssmod using $nfhs_ir	
 }
 
 
@@ -507,10 +507,10 @@ label var other_group "Other social group"
 * husband away 6 mo is only asked for women who say yes to husband away 1 month
 
 gen husband_away1mo = s907 if round==4
-tab husband_away1mo, m if nfhs4==1
+// tab husband_away1mo if round==4, m
 
 replace husband_away1mo = s909 if round==5
-tab husband_away1mo, m if nfhs5==1
+// tab husband_away1mo, m if nfhs5==1
 
 label var husband_away1mo "Husband away for 1+ month in last year"
 
@@ -519,6 +519,7 @@ replace husband_away6mo = s910 if round==5
 replace husband_away6mo = 0 if husband_away1mo==0
 replace husband_away6mo = . if husband_away1mo==.
 
+* because missings might be coded as 9 which affects the mean
 tab husband_away6mo, m
 
 label var husband_away6mo "Husband away for 6+ mo. in last year"
@@ -549,6 +550,7 @@ gen dv_section_incomplete = inlist(v044, 2,3) & v044!=0
 label variable dv_section_incomplete "Couldn't answer DV section"
 
 egen physical_dv = anymatch(d105a-d105j), values(1 2)
+replace physical_dv = . if v044!=1
 label variable physical_dv "Experienced physical violence in last 12 months"
 
 gen afraidof_husband = inlist(d129,1,2) if !missing(d129)
