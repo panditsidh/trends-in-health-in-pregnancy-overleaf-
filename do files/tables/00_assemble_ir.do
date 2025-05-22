@@ -1,5 +1,3 @@
-* change these paths to work locally
-
 if "`c(username)'" == "sidhpandit" {
 	global nfhs3ir "/Users/sidhpandit/Desktop/nfhs/nfhs3ir/IAIR52FL.dta"
 	global nfhs4ir "/Users/sidhpandit/Desktop/nfhs/nfhs4ir/IAIR74FL.DTA"	
@@ -9,22 +7,9 @@ if "`c(username)'" == "sidhpandit" {
 	global nfhs4br "/Users/sidhpandit/Desktop/nfhs/nfhs4br/IABR74FL.DTA"
 	global nfhs5br "/Users/sidhpandit/Desktop/nfhs/nfhs5br/IABR7EFL.DTA"
 	
-	global nfhs3_youngest "/Users/sidhpandit/Desktop/nfhs/nfhs3br/nfhs3_youngest.dta"
-	global nfhs4_youngest "/Users/sidhpandit/Desktop/nfhs/nfhs4br/nfhs4_youngest.DTA"
-	global nfhs5_youngest "/Users/sidhpandit/Desktop/nfhs/nfhs5br/nfhs5_youngest.DTA"
-	
-	global nfhs3_dead "/Users/sidhpandit/Desktop/nfhs/nfhs3br/nfhs3_dead.dta"
-	global nfhs4_dead"/Users/sidhpandit/Desktop/nfhs/nfhs4br/nfhs4_dead.DTA"
-	global nfhs5_dead"/Users/sidhpandit/Desktop/nfhs/nfhs5br/nfhs5_dead.DTA"
-	
-	global nfhs3_dropbins "/Users/sidhpandit/Desktop/nfhs/nfhs3ir/dropbins3.DTA"
-	global nfhs4_dropbins "/Users/sidhpandit/Desktop/nfhs/nfhs4ir/dropbins4.DTA"
-	global nfhs5_dropbins "/Users/sidhpandit/Desktop/nfhs/nfhs5ir/dropbins5.DTA"
-	
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
 	
 }
-
 
 if "`c(username)'" == "diane" {
 	global nfhs3ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\all india individual recode\IAIR52FL.dta"
@@ -35,84 +20,81 @@ if "`c(username)'" == "diane" {
 	global nfhs4br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\all india birth recode\IABR71FL.DTA"
 	global nfhs5br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IABR7EDT\IABR7EFL.DTA"
 	
-	global nfhs3_youngest 
-	global nfhs4_youngest 
-	global nfhs5_youngest 
-	
-	global nfhs3_dead 
-	global nfhs4_dead 
-	global nfhs5_dead 
-	
-	global nfhs3_dropbins 
-	global nfhs4_dropbins 
-	global nfhs5_dropbins 
-	
 	global ir_combined
 	
 }
 
-*DC Why are you renaming the global macros?
+/*
+
+For graphs/tables that don't need reweighting, 
+
+Reweighting steps
+
+for pregnant women, gen
+- mopreg
+- moperiod
+
+for all women, gen
+- modernmethod
+- edu vars
+- age in 10 year bins
+- youngest status (4 categories based on age & bf status)
+		* use a tempfile for this
+- previous child death
+		* use a tempfile for this
+- no. living children
+- urban/rural
+- has living boy
+
+create bins, based on
+- all predictors
+- age, single year
+- find bins that have only pregnant women
+		* use a tempfile for this
+		* instead of dropping observations in dropbins, just don't	 	generate weights for them
+- generate weights
+
+*/
+
+
+* initialize general ir and br file paths - the loop will reassign them to the corresponding survey round
 
 global nfhs_ir $nfhs3ir
 global nfhs_br $nfhs3br
-global nfhs_youngest $nfhs3_youngest
-global nfhs_dead $nfhs3_dead
-global dropbins $nfhs3_dropbins
 
 
 foreach x of numlist 3/5 {
+	
+clear all
 
-	if `x'==3 { 
+if `x'==3 { 
 		global nfhs_ir $nfhs3ir
 		global nfhs_br $nfhs3br
-		global nfhs_youngest $nfhs3_youngest
-		global nfhs_dead $nfhs3_dead
-		global dropbins $nfhs3_dropbins
+		
+		use caseid s824b w124 v044 d* s46* v*  using $nfhs_ir	
 	}
 	
 	if `x'==4 { 
 		global nfhs_ir $nfhs4ir
 		global nfhs_br $nfhs4br
-		global nfhs_youngest $nfhs4_youngest
-		global nfhs_dead $nfhs4_dead
-		global dropbins $nfhs4_dropbins
+		
+		use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* ssmod using $nfhs_ir
 	}
 	
 	if `x'==5 { 
 		global nfhs_ir $nfhs5ir
 		global nfhs_br $nfhs5br
-		global nfhs_youngest $nfhs5_youngest
-		global nfhs_dead $nfhs5_dead
-		global dropbins $nfhs5_dropbins
-	}
+		
+		use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* ssmod using $nfhs_ir	
 
-
-
-clear all
-
-if `x'==3 {
-	use caseid s824b w124 v044 d* s46* v*  using $nfhs_ir	
 }
 
 
-if `x'==4 {
-	use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* ssmod using $nfhs_ir	
-}
-
-
-if `x'==5 {
-	use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* ssmod using $nfhs_ir	
-}
-
-
-
-************************** preparing the sample ********************************
-
-* weight in kg variable
+* gen weight in kg
 replace v437=. if v445>9990 
 replace v437=v437/10
-
-* calc months since last period for currently pregnant women
+	
+* gen months since last period for currently pregnant women
 gen moperiod = .
 replace moperiod = 1 if v215>=101 & v215 <= 128 & v213==1
 replace moperiod = 2 if v215>=129 & v215 <= 156 & v213==1
@@ -136,43 +118,36 @@ replace moperiod = 11 if v215==311 & v213==1
 * compare to self reported duration of current pregnancy
 gen diff = moperiod-v214
 
-
-* calc months pregnant using moperiod 
+* gen gestational duration using moperiod if avaliable
 gen mopreg = moperiod
 replace mopreg = v214 if mopreg==.
 
-
-* focus on pregnancies after first trimester
+* gen preg, an indicator for 3+ mo gestational duration
 gen preg= mopreg > 3
-replace preg=. if mopreg==.
+replace preg=. if mopreg==.	
 
 
-
-********** 1 predictor of pregnancy: not using modern method of contraception **********
+* gen using modern method of contraception indicator
 
 gen vcal_1_trim = trim(vcal_1)
 gen done = 0
 gen isnumber = .
 gen answer = .
-
-
-* go each month thru repd. history, save month of most recent reprd. use in answer
-forvalues i = 1(1)15{
+forvalues i = 1(1)15 {
 	gen month`i' = substr(vcal_1_trim,`i',1)
 	replace isnumber = real(month`i')
 	replace answer = isnumber if isnumber !=.&done==0
 	replace done = 1 if done == 0 & isnumber !=.
 }
-
-* drop couples who are sterilized
-drop if answer==6 | answer ==7
-
 gen modernmethod = .
 replace modernmethod = 0 if answer==0 | answer ==8 | answer==9
 replace modernmethod = 1 if answer>0 & answer <8 
 
+* gen sterilized, don't include in reweighting bc no "risk" of pregnancy
+gen sterilized = answer==6 | answer ==7
 
-********** 2 predictor of pregnancy: none or only primary education *************
+
+* gen education indicators
 gen lessedu= (v106==0| v106==1)
 replace lessedu = . if v106==.
 
@@ -185,17 +160,21 @@ label var educ_none      "No education"
 label var educ_primary   "Primary education"
 label var educ_secondary "Secondary education"
 label var educ_higher    "Higher education"
-
-
-********** 3 predictor of pregnancy: age in 10 year groups **********
+	
+* gen age categories
 gen age_10 = v013
 replace age_10=4 if v013==5
 replace age_10=6 if v013==7
 
 
-********** 4 predictor of pregnancy: age/breastfeeding status of youngest child **********
+/* gen age/breastfeeding status of youngest child (if any)
+	1 less than two and BF
+	2 less than two and not BF 
+	3 two to five
+	4 five plus (removed) 
+	
+	for pregnant women - age of youngest child at start of pregnancy */
 
-* first get youngest child dataset from births recode
 preserve
 
 	clear all 
@@ -208,43 +187,31 @@ preserve
 
 	keep if youngest == 1
 	keep caseid v213 youngest noalive bord b0 b3 b5 b7 b8 m4
-
-	save $nfhs_youngest, replace
+	
+	tempfile nfhs_youngest
+	save `nfhs_youngest'
 
 restore
 
-* merge, drop children without mothers
-merge 1:1 caseid using $nfhs_youngest
+merge 1:1 caseid using `nfhs_youngest' // drop children wo mothers
 drop if _merge == 2
 gen youngest_status=.
 replace youngest_status = 0 if v213==1 & v218==0 
 
 
-*-------	pregnant women: youngest status at START of pregnancy	------------
-* age of youngest child at start of current pregnancy
+* pregnant women
 gen agetoday=v008-b3
 gen ageatpreg=.
 replace ageatpreg=agetoday-mopreg if mopreg>3 & v213==1 
 
-* is youngest child still being breastfed (m4==95)
 gen bfatpreg=.
 replace bfatpreg=1 if youngest==1 & m4==95 & v213==1
-replace bfatpreg=1 if m4>=ageatpreg & m4<61 & v213==1 // not sure about this line, what is m4<61
+replace bfatpreg=1 if m4>=ageatpreg & m4<61 & v213==1
 replace youngest_status = 1 if v213==1 & youngest==1 & ageatpreg<24 & bfatpreg==1 & v218!=0
 replace youngest_status = 2 if v213==1 & youngest==1 & ageatpreg<24 & bfatpreg==. & v218!=0
 replace youngest_status = 3 if v213==1 & youngest==1 & ageatpreg>=24 & v218!=0
-*replace youngest_status = 4 if v213==1 & youngest==1 & ageatpreg>=60 & v218!=0
 
-/*
-*1 less than two and BF
-*2 less than two and not BF 
-*3 two to five
-*4 five plus (removed)
-*/
-
-
-* ---------------  nonpregnant women: youngest status now	--------------------
-
+* nonpregnant women
 replace youngest_status = 0 if v213==0 & v218==0 
 gen bfnow=.
 replace bfnow=1 if youngest==1 & m4==95 & v213==0
@@ -253,18 +220,8 @@ replace youngest_status = 2 if v213==0 & youngest==1 & agetoday<24 & bfnow==. & 
 replace youngest_status = 3 if v213==0 & youngest==1 & agetoday>=24 & v218!=0
 *replace youngest_status = 4 if v213==0 & youngest==1 & agetoday>=60 & v218!=0
 
-/*
-*0 no children
-*1 less than two and BF
-*2 less than two and not BF 
-*3 two plus
-*4 five plus 
-*/
 
-
- 
-********** 5 predictor of pregnancy: previous child death **********
-
+* gen child died in past 5 years (including those who never had a child)
 preserve
 	clear all
 	use $nfhs_br
@@ -274,94 +231,95 @@ preserve
 	by caseid: egen diedpast5yr = max(diedpastfiveyr)
 	collapse diedpast5yr, by(caseid)
 	tab diedpast5yr, m
-	save $nfhs_dead, replace
+	
+	tempfile nfhs_dead
+	save `nfhs_dead'
 restore
 
 rename _merge merge1
 merge 1:1 caseid using $nfhs_dead
-drop if _merge == 2 // moms in child death dataset that aren't in individual recode
+drop if _merge == 2
 gen childdied = diedpast5yr==1
-*0 no child died in past 5 years (including those who never had a child)
-*1 child died in last 5 years
 
-
-
-
-********** 6 predictor of pregnancy: no. of living children **********
+* gen number of living children
 gen noliving = v218
 replace noliving = 4 if v218>3
 replace noliving = . if v218==.
 
-********** 7 predictor of pregnancy: urban/rural **********
+* gen urban/ rural
 gen urban = v025 == 1
 gen rural = v025==2
 
-********** 8 predictor of pregnancy: has a living boy **********
+* gen has a living boy indicator
 gen hasboy = v202 >0 & v202!=.
 replace hasboy = 1 if v204 >0 & v204!=.
 
 
+* gen reweights using all predictors for bins
 
-************************** making the bins ********************************
-
-
-*What are the most important "risk factors" for pregnancy in India?
-*Now let's make the bins.
-/*
-- modern method of contraception: modernmethod (2 bins)
-- primary education: lessedu (2 bins, 10 are missing) 
-- age: v013 (5 bins, 30-40 is a bin, 40-50 is a bin)
-- urban/rural: (2 bins)
-- youngest status: (4 bins)
-- number of kids: noliving (5 bins, actually 4 since no kids is already included in status of youngest)
-- child death: childdied (2 bins, child died in last 5 years, child did not die, or never pregnant)
-- living boy hasboy (2 bins)
-*/
-
-
-egen bin=group(modernmethod lessedu v013 urban youngest_status noliving childdied hasboy)
+egen bin_all=group(modernmethod lessedu v013 urban youngest_status noliving childdied hasboy)
 gen counter=1
 
-
-* drop bins that have only pregnant women
 preserve
-	collapse (sum) counter (mean) modernmethod lessedu v013 urban youngest_status noliving childdied hasboy, by(bin v213)
-	drop if bin == .
-	reshape wide counter, i(bin) j(v213)
+	collapse (sum) counter (mean) modernmethod lessedu v013 urban youngest_status noliving childdied hasboy, by(bin_all v213)
+	drop if bin_all == .
+	reshape wide counter, i(bin_all) j(v213)
 	replace counter0 = 0 if counter0 == .
 	replace counter1 = 0 if counter1 == .
 	count if counter0==0&counter1>0 
 // 	list counter1 modernmethod lessedu v013 urban youngest_status noliving childdied hasboy if counter0==0&counter1>0
 // 	list bin counter1 modernmethod lessedu v013 urban youngest_status noliving childdied hasboy if counter0==0&counter1>0
 
-	gen dropbin = 1 if counter0==0&counter1>0
-	tab dropbin, m
-	keep bin dropbin
-	save $dropbins, replace
+	gen dropbin_all = 1 if counter0==0&counter1>0
+// 	tab dropbin_all, m
+	keep bin_all dropbin_all
+	
+	tempfile dropbins_all
+	save `dropbins_all'
 restore
 
-rename _merge merge2
-merge m:1 bin using $dropbins
-drop if dropbin==1
-drop dropbin
+merge m:1 bin_all using `dropbins_all', gen(dropbins_all_merge)
+
+egen pregweight_all = sum(v005) if v213 == 1 & dropbin_all==0, by(bin_all)
+egen nonpregweight_all = sum(v005) if v213 == 0 & dropbin_all==0, by(bin_all)
+egen transferpreg_all = mean(pregweight_all) if dropbin_all==0, by(bin_all)
+egen transfernonpreg_all = mean(nonpregweight_all) if dropbin_all==0, by(bin_all)
+
+gen reweightingfxn_all = v005*transferpreg_all/transfernonpreg_all if dropbin_all==0
+
+* gen reweights using single year age as bins
+
+gen bin_age=v012
+
+preserve
+	collapse (sum) counter, by(bin_age v213)
+	drop if bin_age == .
+	reshape wide counter, i(bin_age) j(v213)
+	replace counter0 = 0 if counter0 == .
+	replace counter1 = 0 if counter1 == .
+	count if counter0==0&counter1>0 
+
+	gen dropbin_age = 1 if counter0==0&counter1>0
+
+	keep bin_age dropbin_age
+	
+	tempfile dropbins_age
+	save `dropbins_age'
+restore
+
+merge m:1 bin_age using `dropbins_age', gen(dropbins_age_merge)
+// drop if dropbin_age==1
+// drop dropbin_age
+
+egen pregweight_age = sum(v005) if v213 == 1 & dropbin_age==0, by(bin_age)
+egen nonpregweight_age = sum(v005) if v213 == 0 & dropbin_age==0, by(bin_age)
+egen transferpreg_age = mean(pregweight_age) if dropbin_age==0, by(bin_age)
+egen transfernonpreg_age = mean(nonpregweight_age) if dropbin_age==0, by(bin_age)
+
+gen reweightingfxn_age = v005*transferpreg_age/transfernonpreg_age if dropbin_age==0
 
 
-
-
-************************** reweighting using the bins ********************************
-
-*Calculate average BMI of "childbearing" women.
-egen pregweight = sum(v005) if v213 == 1, by(bin)
-egen nonpregweight = sum(v005) if v213 == 0, by(bin)
-egen transferpreg = mean(pregweight), by(bin)
-egen transfernonpreg = mean(nonpregweight), by(bin)
-
-gen reweightingfxn = v005*transferpreg/transfernonpreg
-sum v437 [aweight=reweightingfxn] if v213 == 0
-*AVERAGE WEIGHT OF PRE PREGNANT WOMEN: 45.29
-
-
-
+* save current survey round IR with generated variables to stack later 
 if `x'== 3 {
 	tempfile nfhs3
 	save `nfhs3'
@@ -377,13 +335,10 @@ if `x'== 5 {
 	save `nfhs5'
 }
 
+}
 
+* survey rounds for loop end, now stack and generate all other variables
 
-} // giant for loop end
-
-
-
-************************** append the survey rounds and gen variables ********************************
 
 append using `nfhs4'
 append using `nfhs3'
@@ -579,8 +534,4 @@ egen psu = group(v000 v001 v024 v025)
 bysort v000: egen totalwt = total(v005)
 gen wt = v005/totalwt
 
-
-
 save $ir_combined, replace
-
-
