@@ -27,13 +27,13 @@ if "`c(username)'" == "sidhpandit" {
 
 
 if "`c(username)'" == "diane" {
-	global nfhs3ir 
-	global nfhs4ir 
-	global nfhs5ir 
+	global nfhs3ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\all india individual recode\IAIR52FL.dta"
+	global nfhs4ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\all india individual recode\IAIR71FL.DTA"
+	global nfhs5ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IAIR7DDT\IAIR7DFL.DTA"
 	
-	global nfhs3br 
-	global nfhs4br 
-	global nfhs5br 
+	global nfhs3br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\all india birth recode\IABR52FL.dta"
+	global nfhs4br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\all india birth recode\IABR71FL.DTA"
+	global nfhs5br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IABR7EDT\IABR7EFL.DTA"
 	
 	global nfhs3_youngest 
 	global nfhs4_youngest 
@@ -50,6 +50,8 @@ if "`c(username)'" == "diane" {
 	global ir_combined
 	
 }
+
+*DC Why are you renaming the global macros?
 
 global nfhs_ir $nfhs3ir
 global nfhs_br $nfhs3br
@@ -262,7 +264,6 @@ replace youngest_status = 3 if v213==0 & youngest==1 & agetoday>=24 & v218!=0
 
  
 ********** 5 predictor of pregnancy: previous child death **********
-
 
 preserve
 	clear all
