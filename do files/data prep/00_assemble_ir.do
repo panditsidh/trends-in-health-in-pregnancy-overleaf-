@@ -78,14 +78,14 @@ if `x'==3 {
 		global nfhs_ir $nfhs4ir
 		global nfhs_br $nfhs4br
 		
-		use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* ssmod using $nfhs_ir
+		use caseid s928b s930 s927 v743a* v044 d105a-d105j d129 s907 s908 s116 v* s236 s220b* ssmod sb* using $nfhs_ir
 	}
 	
 	if `x'==5 { 
 		global nfhs_ir $nfhs5ir
 		global nfhs_br $nfhs5br
 		
-		use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* ssmod using $nfhs_ir	
+		use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* ssmod sb* using $nfhs_ir	
 
 }
 
@@ -466,6 +466,7 @@ label var muslim "Muslim"
 label var sikh_jain_christian "Sikh, Jain or Christian"
 label var other_group "Other social group"
 
+*Need a variable that indicates than an
 
 * husband away 6 mo is only asked for women who say yes to husband away 1 month
 
@@ -533,6 +534,58 @@ label variable any_work "Worked in last 12 months"
 * paid work is only asked for any_work ==1
 gen paid_work = inlist(v741,1,2,3) if !missing(v741)
 label variable paid_work "Paid in cash or in-kind for work"
+
+*blood pressure
+*only measured in NFHS 4 and 5
+*This way of coding blood pressure marks diastolic and systolic BP over 300 as missing, and uses the average of 3 observations if none are missing and all are below 300.  If one is missing, it uses the average of the other two.  If two are not available, it uses whatever single observation is available.
+*I think we should drop systolic pressures over
+
+gen bp_d = .
+replace bp_d = sb18d if sb18d < 300 & round==5
+replace bp_d = sb25d if sb25d < 300 & bp_d ==. & round==5
+replace bp_d = sb29d if sb29d < 300 & bp_d ==. & round==5
+replace bp_d = (sb18d + sb25d)/2 if sb18d < 300 & sb25d < 300 & round==5
+replace bp_d = (sb18d + sb29d)/2 if sb18d < 300 & sb29d < 300 & round==5
+replace bp_d = (sb29d + sb25d)/2 if sb29d < 300 & sb25d < 300 & round==5
+replace bp_d = (sb18d + sb25d + sb29d)/3 if sb18d < 300 & sb25d < 300 & sb29d < 300 & round==5
+
+replace bp_d = sb16d if sb16d < 300 & round==4
+replace bp_d = sb23d if sb23d < 300 & bp_d ==. & round==4
+replace bp_d = sb27d if sb27d < 300 & bp_d ==. & round==4
+replace bp_d = (sb16d + sb23d)/2 if sb16d < 300 & sb23d < 300 & round==4
+replace bp_d = (sb16d + sb27d)/2 if sb16d < 300 & sb27d < 300 & round==4
+replace bp_d = (sb27d + sb23d)/2 if sb27d < 300 & sb23d < 300 & round==4
+replace bp_d = (sb16d + sb23d + sb27d)/3 if sb16d < 300 & sb23d < 300 & sb27d < 300 & round==4
+
+
+gen bp_s = .
+replace bp_s = sb18s if sb18s < 300 & round==5 
+replace bp_s = sb25s if sb25s < 300 & bp_s ==. & round==5
+replace bp_s = sb29s if sb29s < 300 & bp_s ==. & round==5
+replace bp_s = (sb18s + sb25s)/2 if sb18s < 300 & sb25s < 300 & round==5
+replace bp_s = (sb18s + sb29s)/2 if sb18s < 300 & sb29s < 300 & round==5
+replace bp_s = (sb29s + sb25s)/2 if sb29s < 300 & sb25s < 300 & round==5
+replace bp_s = (sb18s + sb25s + sb29s)/3 if sb18s < 300 & sb25s < 300 & sb29s < 300 & round==5
+
+replace bp_s = sb16s if sb16s < 300 & round==4
+replace bp_s = sb23s if sb23s < 300 & bp_s ==. & round==4
+replace bp_s = sb27s if sb27s < 300 & bp_s ==. & round==4
+replace bp_s = (sb16s + sb23s)/2 if sb16s < 300 & sb23s < 300 & round==4
+replace bp_s = (sb16s + sb27s)/2 if sb16s < 300 & sb27s < 300 & round==4
+replace bp_s = (sb27s + sb23s)/2 if sb27s < 300 & sb23s < 300 & round==4
+replace bp_s = (sb16s + sb23s + sb27s)/3 if sb16s < 300 & sb23s < 300 & sb27s < 300 & round==4
+
+twoway (kdensity bp_s if round==4) (kdensity bp_s if round==5), legend(label(1 "NFHS-4" 2 "NFHS-5"))
+
+*I think we should drop the 250 but the others look right, we need to come up with a rule that covers this.
+list bp_s if bp_s > 200 & bp_s!=. & v213==1
+
+*No pregnant women have diastolic over 200.
+list bp_d if bp_d > 200 & bp_d!=. & v213==1
+
+gen age_in_mo_at_survey = (v008-v011)/12
+
+
 
 *Calculate weights
 egen strata = group(v000 v024 v025) 
