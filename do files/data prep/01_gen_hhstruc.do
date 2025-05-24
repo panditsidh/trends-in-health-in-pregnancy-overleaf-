@@ -12,6 +12,19 @@ if "`c(username)'" == "sidhpandit" {
 	global nfhs5hmr "/Users/sidhpandit/Desktop/nfhs/nfhs5hmr/IAPR7EFL.DTA"
 }
 
+if "`c(username)'" == "dc42724" {
+		
+	
+	global ir_combined "C:\Users\dc42724\Dropbox\K01\trends_health_pregnancy\datasets\ir345_trends_pregnancy.dta"
+	
+
+	global nfhs3hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\hhmr\IAPR52FL.dta"
+	
+	global nfhs4hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\hhmr\IAPR71FL.DTA"
+	
+	global nfhs5hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IAPR7DDT\IAPR7DFL.DTA"
+}
+
 * stack hmr 
 clear all
 

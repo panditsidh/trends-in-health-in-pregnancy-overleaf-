@@ -11,16 +11,16 @@ if "`c(username)'" == "sidhpandit" {
 	
 }
 
-if "`c(username)'" == "diane" {
-	global nfhs3ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\all india individual recode\IAIR52FL.dta"
-	global nfhs4ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\all india individual recode\IAIR71FL.DTA"
+if "`c(username)'" == "dc42724" {
+	global nfhs3ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\ir\IAIR52FL.dta"
+	global nfhs4ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\ir\IAIR71FL.DTA"
 	global nfhs5ir "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IAIR7DDT\IAIR7DFL.DTA"
 	
-	global nfhs3br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\all india birth recode\IABR52FL.dta"
-	global nfhs4br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\all india birth recode\IABR71FL.DTA"
+	global nfhs3br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\br\IABR52FL.dta"
+	global nfhs4br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\br\IABR71FL.DTA"
 	global nfhs5br "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IABR7EDT\IABR7EFL.DTA"
-	
-	global ir_combined
+
+	global ir_combined "C:\Users\dc42724\Dropbox\K01\trends_health_pregnancy\datasets\ir345_trends_pregnancy.dta"
 	
 }
 
@@ -237,7 +237,7 @@ preserve
 restore
 
 rename _merge merge1
-merge 1:1 caseid using $nfhs_dead
+merge 1:1 caseid using `nfhs_dead'
 drop if _merge == 2
 gen childdied = diedpast5yr==1
 
@@ -337,11 +337,14 @@ if `x'== 5 {
 
 }
 
-* survey rounds for loop end, now stack and generate all other variables
-
 
 append using `nfhs4'
 append using `nfhs3'
+
+*there is a dataset generated at the end of this command 
+*survey rounds for loop end, now stack and generate all other variables
+* use "C:\Users\dc42724\Dropbox\K01\trends_health_pregnancy\datasets\ir345_trends_pregnancy.dta" from here
+
 
 gen round5=(v000=="IA7")
 gen round4=(v000=="IA6")
@@ -413,24 +416,28 @@ label values region regionlbl
 
 
 * Step 1: Create the variable
-gen group = .
+gen groups6 = .
+*This follows the groups8 variable from the IHDS.  A potential difference is that it codes people who didn't know/didn't answer the caste question as forward caste if they say they are Hindu.  it does not do this for other religions.
 
 * Step 2: Hindus by caste
 * NFHS-3: caste in s46, religion in v130
-replace group = 1 if v130 == 1 & s46 == 4 & round == 3 // Forward Caste
-replace group = 2 if v130 == 1 & s46 == 3 & round == 3 // OBC
-replace group = 3 if v130 == 1 & s46 == 1 & round == 3 // Dalit
-replace group = 4 if v130 == 1 & s46 == 2 & round == 3 // Adivasi
+replace groups6 = 3 if s46 == 1 & round == 3 // Dalit
+replace groups6 = 4 if s46 == 2 & round == 3 // Adivasi
+replace groups6 = 5 if v130 == 2 & groups6==. &round==3  // Muslim
+replace groups6 = 6 if (v130 == 3| v130==4 | v130==6) & groups6==. &round==3 // Christian, Sikh, Jain
+replace groups6 = 2 if (v130 == 1 |v130==4) & s46 == 3 & round == 3 // OBC - hindu and sikh
+replace groups6 = 1 if v130 == 1 & (s46 == 4 |s46==8 |s46==9 |s46==.) & round == 3 // Forward Caste
+
 
 * NFHS-4/5: caste in s116, religion in v130
-replace group = 1 if v130 == 1 & s116 == 4 & inlist(round, 4, 5) // Forward Caste
-replace group = 2 if v130 == 1 & s116 == 3 & inlist(round, 4, 5) // OBC
-replace group = 3 if v130 == 1 & s116 == 1 & inlist(round, 4, 5) // Dalit
-replace group = 4 if v130 == 1 & s116 == 2 & inlist(round, 4, 5) // Adivasi
+replace groups6 = 3 if s116 == 1 & inlist(round, 4, 5) // Dalit
+replace groups6 = 4 if s116 == 2 & inlist(round, 4, 5) // Adivasi
+replace groups6 = 5 if v130 == 2 & groups6==. & inlist(round, 4, 5)  // Muslim
+replace groups6 = 6 if (v130 == 3| v130==4 | v130==6) & groups6==. & inlist(round, 4, 5) // Christian, Sikh, Jain
+replace groups6 = 2 if (v130 == 1 |v130==4) & s116 == 3 & inlist(round, 4, 5) // OBC - hindu and sikh
+replace groups6 = 1 if v130 == 1 & (s116 == 4 | s116==8 |s116==.) & inlist(round, 4, 5) // Forward Caste
 
-* Step 3: Non-Hindu religion dominates
-replace group = 5 if v130 == 2  // Muslim
-replace group = 6 if inlist(v130, 3, 4, 6) // Christian, Sikh, Jain
+tab round groups6 if v213==1 [aweight=v005], row m
 
 * Step 4: Assign label
 label define grouplbl ///
@@ -441,15 +448,15 @@ label define grouplbl ///
     5 "Muslim" ///
     6 "Sikh, Jain, Christian"
 
-label values group grouplbl
+label values groups6 groups6lbl
 
-gen forward = group==1
-gen obc = group==2
-gen dalit = group==3
-gen adivasi = group==4
+gen forward = groups6==1
+gen obc = groups6==2
+gen dalit = groups6==3
+gen adivasi = groups6==4
 gen muslim = group==5
-gen sikh_jain_christian = group==6
-gen other_group = missing(group)
+gen sikh_jain_christian = groups6==6
+gen other_group = missing(groups6)
 
 label var forward "Forward"
 label var obc "OBC"
