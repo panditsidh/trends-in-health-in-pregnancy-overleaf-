@@ -14,9 +14,9 @@ if "`c(username)'" == "dc42724" {
 }
 
 * to test, uncomment the following line(s). 
-// use $ir_combined, clear
-// drop round5-wt
-// label drop roundlbl regionlbl grouplbl
+use $ir_combined, clear
+drop round5-wt
+label drop roundlbl regionlbl grouplbl
 
 
 gen round5=(v000=="IA7")
@@ -151,6 +151,41 @@ label values region regionlbl
 
 ******************************** SOCIAL GROUP **********************************
 
+
+* caste breakdown within Muslim, Christian, Sikh, Jain 
+* religion/ SES breakdown within "don't know"
+
+
+NFHS-3: 
+
+11.88% of Muslims are OBC
+15.64% of Muslims are "none of the above"
+
+10.70% of C/S/J are OBC
+15.04% of C/S/J are "none of the above"
+
+
+
+gen caste = s116 if inlist(round,4,5)
+replace caste = s46 if round==3
+
+
+
+
+
+
+* should OBC Muslim or C/S/J be coded by caste or religion
+* should Hindu caste "don't know" be coded as forward
+
+
+* 3 - Dalit 
+* 4 - Adivasi 
+* 5 - Muslim (not SC/ST)
+* 6 - Christian/Sikh/Jain (not SC/ST)
+* 2 - OBC (only Hindus & Sikhs)
+* 1 - forward (only Hindus)
+
+
 * Step 1: Create the variable
 gen groups6 = .
 *This follows the groups8 variable from the IHDS.  A potential difference is that it codes people who didn't know/didn't answer the caste question as forward caste if they say they are Hindu.  it does not do this for other religions.
@@ -159,10 +194,10 @@ gen groups6 = .
 * NFHS-3: caste in s46, religion in v130
 replace groups6 = 3 if s46 == 1 & round == 3 // Dalit
 replace groups6 = 4 if s46 == 2 & round == 3 // Adivasi
-replace groups6 = 5 if v130 == 2 & groups6==. &round==3  // Muslim
-replace groups6 = 6 if (v130 == 3| v130==4 | v130==6) & groups6==. &round==3 // Christian, Sikh, Jain
-replace groups6 = 2 if (v130 == 1 |v130==4) & s46 == 3 & round == 3 // OBC - hindu and sikh
-replace groups6 = 1 if v130 == 1 & (s46 == 4 |s46==8 |s46==9 |s46==.) & round == 3 // Forward Caste
+replace groups6 = 5 if v130 == 2 & groups6==. &round==3  // Muslim (if not alr Dalit/Adivasi)
+replace groups6 = 6 if (v130 == 3| v130==4 | v130==6) & groups6==. &round==3 // Christian, Sikh, Jain (if not alr Dalit/Adivasi)
+replace groups6 = 2 if (v130 == 1 |v130==4) & s46 == 3 & round == 3 // OBC - Hindu and Sikh
+replace groups6 = 1 if v130 == 1 & (s46 == 4 |s46==8 |s46==9 |s46==.) & round == 3 // Forward Caste if Hindu & not SC, ST or OBC (even don't know)
 
 
 * NFHS-4/5: caste in s116, religion in v130

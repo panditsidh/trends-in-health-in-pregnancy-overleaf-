@@ -15,6 +15,8 @@ if "`c(username)'" == "sidhpandit" {
 	
 	global gen_vars "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/do files/data prep/02_gen_vars.do"
 	
+	global gen_hhstruc "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/do files/data prep/03_gen_hhstruc.do"
+	
 }
 
 if "`c(username)'" == "dc42724" {
@@ -30,7 +32,7 @@ if "`c(username)'" == "dc42724" {
 	
 	global reweighting "C:\Users\dc42724\Documents\Github\trends-in-health-in-pregnancy-overleaf-/do files/01_reweighting.do"
 	
-	global gen_vars "C:\Users\dc42724\Documents\Github\trends-in-health-in-pregnancy-overleaf-/do files/02_gen_vars.do"
+	global gen_hhstruc "C:\Users\dc42724\Documents\Github\trends-in-health-in-pregnancy-overleaf-/do files/data prep/03_gen_hhstruc.do"
 	
 }
 
@@ -74,7 +76,7 @@ foreach x of numlist 3/5 {
 		global nfhs_ir $nfhs5ir
 		global nfhs_br $nfhs5br
 		
-		use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* ssmod sb* b18d sb25d sb29d sb18s sb25s sb29s using $nfhs_ir	
+		use caseid s930b s932 s929 v743a* v044 d105a-d105j d129 s909 s910 s920 s116 v* s236 s220b* ssmod sb* sb18d sb25d sb29d sb18s sb25s sb29s using $nfhs_ir	
 		
 		qui do "${reweighting}"
 
@@ -89,6 +91,10 @@ append using `nfhs3'
 
 * now we generate other variables
 do "${gen_vars}"
+
+save $ir_combined, replace
+
+do "${gen_hhstruc}"
 
 save $ir_combined, replace
 
