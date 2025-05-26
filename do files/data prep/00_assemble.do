@@ -30,9 +30,11 @@ if "`c(username)'" == "dc42724" {
 
 	global ir_combined "C:\Users\dc42724\Dropbox\K01\trends_health_pregnancy\datasets\ir345_trends_pregnancy.dta"
 	
-	global reweighting "C:\Users\dc42724\Documents\Github\trends-in-health-in-pregnancy-overleaf-/do files/01_reweighting.do"
+	global reweighting "C:\Users\dc42724\Documents\GitHub\trends-in-health-in-pregnancy-overleaf-\do files\data prep\01_reweighting.do"
 	
-	global gen_hhstruc "C:\Users\dc42724\Documents\Github\trends-in-health-in-pregnancy-overleaf-/do files/data prep/03_gen_hhstruc.do"
+	global gen_vars "C:\Users\dc42724\Documents\GitHub\trends-in-health-in-pregnancy-overleaf-\do files\data prep\02_gen_vars.do"
+	
+	global gen_hhstruc "C:\Users\dc42724\Documents\GitHub\trends-in-health-in-pregnancy-overleaf-\do files\data prep\03_gen_hhstruc.do"
 	
 }
 
