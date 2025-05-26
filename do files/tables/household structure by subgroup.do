@@ -180,7 +180,6 @@ drop rows
 
 svmat full_expanded, names(col)
 
-
 rename c1 mean_3
 rename c2 lb_3
 rename c3 ub_3
@@ -191,14 +190,13 @@ rename c7 mean_5
 rename c8 lb_5
 rename c9 ub_5
 
-
 gen ci_3 = string(mean_3, "%4.1f") + " (" + string(lb_3, "%4.1f") + ", " + string(ub_3, "%4.1f") + ")"
 gen ci_4 = string(mean_4, "%4.1f") + " (" + string(lb_4, "%4.1f") + ", " + string(ub_4, "%4.1f") + ")"
 gen ci_5 = string(mean_5, "%4.1f") + " (" + string(lb_5, "%4.1f") + ", " + string(ub_5, "%4.1f") + ")"
 
 keep row ci_3 ci_4 ci_5
 
-listtex row ci_3 ci_4 ci_5 using , replace ///
+listtex row ci_3 ci_4 ci_5 using $out_tex_ci, replace ///
   rstyle(tabular) ///
   head("\begin{tabular}{lccc}" ///
        "\toprule" ///
