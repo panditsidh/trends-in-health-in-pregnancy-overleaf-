@@ -5,9 +5,11 @@ if "`c(username)'" == "sidhpandit" {
 	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
 	
 	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/hh_structure_subgroups.tex"
+	
+	global out_tex_ci "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/hh_structure_subgroups_ci.tex"
 }
 
-use $ihr_pregnant, clear
+use $ir_combined, clear
 
 keep if v213==1
 
@@ -92,8 +94,115 @@ esttab matrix(full), replace
 
 
 #delimit ;
-esttab matrix(full_ci) using $out_tex, replace 
+esttab matrix(full) using $out_tex, replace 
 	cells("mean(fmt(2))")
     noobs nonumber label booktabs;
+#delimit cr
+
+	
+	
+* Step 1: Create empty 2×9 matrix
+matrix blank2 = J(2, 9, .)
+matrix blank1 = J(1, 9, .)
+
+* Step 2: Stack vertically
+matrix full_expanded = /// 
+	blank1 \ ///
+    full_ci_nuclear \  ///
+    blank2 \            ///
+    full_ci_sasural \  ///
+    blank2 \            ///
+    full_ci_natal
 
 
+gen row = ""
+input str30 rows
+"\textbf{Nuclear Households}"
+"India"
+"Focus"
+"Central"
+"East"
+"West"
+"North"
+"South"
+"Northeast"
+"Rural"
+"Urban"
+"Forward Caste"
+"OBC"
+"Dalit"
+"Adivasi"
+"Muslim"
+"Sikh, Jain, Christian"
+""
+"\textbf{Sasural Households}"
+"India"
+"Focus"
+"Central"
+"East"
+"West"
+"North"
+"South"
+"Northeast"
+"Rural"
+"Urban"
+"Forward Caste"
+"OBC"
+"Dalit"
+"Adivasi"
+"Muslim"
+"Sikh, Jain, Christian"
+""
+"\textbf{Natal Households}"
+"India"
+"Focus"
+"Central"
+"East"
+"West"
+"North"
+"South"
+"Northeast"
+"Rural"
+"Urban"
+"Forward Caste"
+"OBC"
+"Dalit"
+"Adivasi"
+"Muslim"
+"Sikh, Jain, Christian"
+""
+end
+
+
+replace row = rows
+drop rows
+
+
+svmat full_expanded, names(col)
+
+
+rename c1 mean_3
+rename c2 lb_3
+rename c3 ub_3
+rename c4 mean_4
+rename c5 lb_4
+rename c6 ub_4
+rename c7 mean_5
+rename c8 lb_5
+rename c9 ub_5
+
+
+gen ci_3 = string(mean_3, "%4.1f") + " (" + string(lb_3, "%4.1f") + ", " + string(ub_3, "%4.1f") + ")"
+gen ci_4 = string(mean_4, "%4.1f") + " (" + string(lb_4, "%4.1f") + ", " + string(ub_4, "%4.1f") + ")"
+gen ci_5 = string(mean_5, "%4.1f") + " (" + string(lb_5, "%4.1f") + ", " + string(ub_5, "%4.1f") + ")"
+
+keep row ci_3 ci_4 ci_5
+
+listtex row ci_3 ci_4 ci_5 using , replace ///
+  rstyle(tabular) ///
+  head("\begin{tabular}{lccc}" ///
+       "\toprule" ///
+       "Group & NFHS-3 & NFHS-4 & NFHS-5 \\\\" ///
+       "\midrule") ///
+  foot("\bottomrule" ///
+       "\end{tabular}") ///

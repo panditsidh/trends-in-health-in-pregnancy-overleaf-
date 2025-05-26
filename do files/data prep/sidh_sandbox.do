@@ -153,30 +153,56 @@ label values region regionlbl
 
 
 * caste breakdown within Muslim, Christian, Sikh, Jain 
-* religion/ SES breakdown within "don't know"
-
-
-NFHS-3: 
-
-11.88% of Muslims are OBC
-15.64% of Muslims are "none of the above"
-
-10.70% of C/S/J are OBC
-15.04% of C/S/J are "none of the above"
-
 
 
 gen caste = s116 if inlist(round,4,5)
 replace caste = s46 if round==3
 
+label define caste_lbl ///
+    1 "Scheduled Caste" ///
+    2 "Scheduled Tribe" ///
+    3 "Other Backward Class" ///
+    4 "None of the Above" ///
+    8 "Don't Know"
+
+label values caste caste_lbl
+
+* should OBC take precedence over religion when Muslim, C/S/J?
+* caste breakdown of C/S/J
+tab caste if inlist(v130,2,3,4) [aw=wt], m
+// 37.53% OBC
+// 34.94% none of the above
+// 13.3% missing 
 
 
+* caste breakdown of Muslims
+tab caste if inlist(v130,2) [aw=wt], m
+// 42.51% OBC
+// 36.37% none of the above
+// 16.18% missing
+
+* religion breakdown of 'idk' caste
+tab v130 if caste==8 [aw=wt]
 
 
+* should Hindus who answer don't know to caste be coded as forward?
 
-* should OBC Muslim or C/S/J be coded by caste or religion
-* should Hindu caste "don't know" be coded as forward
+* religion breakdown within "don't know"
+tab v130 if caste==8 [aw=wt]
+// 70% Hindu
+// 26% Muslim
 
+* education breakdown of 'idk caste' among Hindus
+tab v106 if caste==8 & v130==1 [aw=wt]
+
+* education breakdown of upper caste Hindus
+tab v106 if caste==4 & v130==1 [aw=wt]
+
+* education breakdown of SC/ST
+tab v106 if inlist(caste,1,2) & v130==1 [aw=wt]
+
+// distribution of education among caste idk looks more like SC/ST than forward 
+// decided to code them as missing then
 
 * 3 - Dalit 
 * 4 - Adivasi 
@@ -197,8 +223,8 @@ replace groups6 = 4 if s46 == 2 & round == 3 // Adivasi
 replace groups6 = 5 if v130 == 2 & groups6==. &round==3  // Muslim (if not alr Dalit/Adivasi)
 replace groups6 = 6 if (v130 == 3| v130==4 | v130==6) & groups6==. &round==3 // Christian, Sikh, Jain (if not alr Dalit/Adivasi)
 replace groups6 = 2 if (v130 == 1 |v130==4) & s46 == 3 & round == 3 // OBC - Hindu and Sikh
-replace groups6 = 1 if v130 == 1 & (s46 == 4 |s46==8 |s46==9 |s46==.) & round == 3 // Forward Caste if Hindu & not SC, ST or OBC (even don't know)
-
+replace groups6 = 1 if v130 == 1 & (s46 == 4 |s46==9 |s46==.) & round == 3 // Forward Caste if Hindu & not SC, ST or OBC (even don't know)
+replace groups6 = . if v130 == 1 & s46==8 // Hindus who don't know their caste
 
 * NFHS-4/5: caste in s116, religion in v130
 replace groups6 = 3 if s116 == 1 & inlist(round, 4, 5) // Dalit
@@ -206,9 +232,14 @@ replace groups6 = 4 if s116 == 2 & inlist(round, 4, 5) // Adivasi
 replace groups6 = 5 if v130 == 2 & groups6==. & inlist(round, 4, 5)  // Muslim
 replace groups6 = 6 if (v130 == 3| v130==4 | v130==6) & groups6==. & inlist(round, 4, 5) // Christian, Sikh, Jain
 replace groups6 = 2 if (v130 == 1 |v130==4) & s116 == 3 & inlist(round, 4, 5) // OBC - hindu and sikh
-replace groups6 = 1 if v130 == 1 & (s116 == 4 | s116==8 |s116==.) & inlist(round, 4, 5) // Forward Caste
+replace groups6 = 1 if v130 == 1 & (s116 == 4 |s116==.) & inlist(round, 4, 5) // Forward Caste
+replace groups6 = . if v130 == 1 & s116==8 // Hindus who don't know their caste
 
 tab round groups6 if v213==1 [aweight=v005], row m
+
+* alternative grouping that gives precendence to OBC
+gen groups6_obc = groups6
+replace groups6_obc = 2 if caste==3
 
 * Step 4: Assign label
 label define grouplbl ///
@@ -220,6 +251,7 @@ label define grouplbl ///
     6 "Sikh, Jain, Christian"
 
 label values groups6 groups6lbl
+label values groups6_obc groups6lbl
 
 gen forward = groups6==1
 gen obc = groups6==2

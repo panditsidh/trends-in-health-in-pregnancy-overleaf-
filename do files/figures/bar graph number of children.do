@@ -12,9 +12,7 @@ gen parity_2 = v219==2
 gen parity_3 = v219==3
 gen parity_4plus = v219>=4
 
-
 gen parity = v219 if v219<=4
-
 replace parity = 4 if v219>=4
 
 
