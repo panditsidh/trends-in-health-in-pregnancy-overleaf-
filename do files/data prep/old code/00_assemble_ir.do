@@ -24,6 +24,9 @@ if "`c(username)'" == "dc42724" {
 	
 }
 
+
+
+
 /*
 
 For graphs/tables that don't need reweighting, 
@@ -58,7 +61,6 @@ create bins, based on
 
 
 * initialize general ir and br file paths - the loop will reassign them to the corresponding survey round
-
 global nfhs_ir $nfhs3ir
 global nfhs_br $nfhs3br
 
@@ -90,9 +92,6 @@ if `x'==3 {
 }
 
 
-* gen weight in kg
-replace v437=. if v445>9990 
-replace v437=v437/10
 	
 * gen months since last period for currently pregnant women
 gen moperiod = .
@@ -360,6 +359,11 @@ label values round roundlbl
 
 gen bmi = v445 if v445!=9998 & v445!= 9999
 replace bmi = bmi/100
+
+* gen weight in kg
+replace v437=. if v445>9990 
+replace v437=v437/10
+
 
 * Step 1: Define region value labels
 label define regionlbl ///

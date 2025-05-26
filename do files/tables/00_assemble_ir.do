@@ -24,6 +24,8 @@ if "`c(username)'" == "diane" {
 	
 }
 
+
+
 /*
 
 For graphs/tables that don't need reweighting, 
@@ -89,10 +91,6 @@ if `x'==3 {
 
 }
 
-
-* gen weight in kg
-replace v437=. if v445>9990 
-replace v437=v437/10
 	
 * gen months since last period for currently pregnant women
 gen moperiod = .
@@ -354,6 +352,10 @@ replace round=3 if round3==1
 label define roundlbl 3 "NFHS-3 (2005-2006)" 4 "NFHS-4 (2015-2016)" 5 "NFHS-5 (2019-2021)"
 label values round roundlbl
 
+
+* gen weight in kg
+replace v437=. if v445>9990 
+replace v437=v437/10
 
 gen bmi = v445 if v445!=9998 & v445!= 9999
 replace bmi = bmi/100
