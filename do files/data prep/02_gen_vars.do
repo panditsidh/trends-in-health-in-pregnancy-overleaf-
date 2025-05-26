@@ -213,15 +213,12 @@ label variable dv_section_incomplete "Couldn't answer DV section"
 // bysort round: tab v044, m
 // no missings
 
+* This is asked for those who have ever been married or in union
 egen physical_dv = anymatch(d105a-d105j), values(1 2)
 replace physical_dv = . if v044!=1
 label variable physical_dv "Experienced physical violence in last 12 months"
-
-// bysort round: tab d105a if v044==1, m
-// 14,219 (16.99%) missing in nfhs3
-// 13,716 (17.20%) missing in nfhs4
-// 8,469 (11.71%) missing in nfhs5
-// COME BACK TO THIS ONE
+// bysort round: tab d105a if v044==1 & v501!=0, m
+// almost no missings
 
 gen afraidof_husband = inlist(d129,1,2) if !missing(d129)
 label variable afraidof_husband "Afraid of husband some or most of the time"
@@ -261,13 +258,14 @@ replace own_money = s929==1 if round==5 & !missing(s932)
 
 label var own_money "Has money she can decide how to use"
 
+* healthcare decisions is only asked for married women
 gen healthdecide_alone = v743a==1 if !missing(v743a)
 gen healthdecide_whusb = v743a==2 if !missing(v743a)
 gen healthdecide_husband = v743a==4 if !missing(v743a)
 gen healthdecide_else = v743a==5 if !missing(v743a)
 gen healthdecide_other = v743a==6 if !missing(v743a)
-// bysort round: tab v743a if ssmod_placeholder==1, m 
-// COME BACK TO THIS ONE
+// bysort round: tab v743a if ssmod_placeholder==1 & v501==1, m 
+// no missings
 
 label variable healthdecide_alone "own healthcare: Respondent alone"
 label variable healthdecide_whusb "own healthcare: Respondent + husband"
@@ -307,19 +305,18 @@ gen paid_work = inlist(v741,1,2,3) & !missing(any_work)
 
 label variable paid_work "Paid in cash or in-kind for work"
 
-* husband away 6 mo is only asked for women who say yes to husband away 1 month
+* husband away 1 mo is only asked for married women
 gen husband_away1mo = s907 if round==4
-// tab s907 if ssmod==1 & round==4, m
-// 35,540 (29.05%) missings
-// COME BACK TO THIS ONE
+// tab s907 if ssmod==1 & round==4 & v501==1, m
+// no missings
 
 replace husband_away1mo = s909 if round==5
-// tab s909 if ssmod==1 & round==5, m
-// 31,875 (29.30%) missings
-// COME BACK TO THIS ONE
+// tab s909 if ssmod==1 & round==5 & v501==1, m
+// no missings
 
 label var husband_away1mo "Husband away for 1+ month in last year"
 
+* husband away 6 mo is only asked for women who say yes to husband away 1 month
 gen husband_away6mo = s908 if round==4
 // tab s908 if ssmod==1 & round==4 & s907==1, m
 // no missings
@@ -327,6 +324,7 @@ gen husband_away6mo = s908 if round==4
 replace husband_away6mo = s910 if round==5
 // tab s910 if ssmod==1 & round==5 & s909==1, m
 // no missings
+
 
 replace husband_away6mo = 0 if husband_away1mo==0
 replace husband_away6mo = . if husband_away1mo==.
