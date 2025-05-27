@@ -12,12 +12,6 @@ use $ir_combined, clear
 
 
 
-label define roundlbl ///
-    3 "NFHS-3 (2005–2006)" ///
-    4 "NFHS-4 (2015–2016)" ///
-    5 "NFHS-5 (2019–2021)"
-
-label values round roundlbl
 
 preserve
 
@@ -29,7 +23,7 @@ graph box v012 if v213==1 [aw=wt], ///
     ylabel(15(5)35, angle(0) nogrid) ///
     ytitle("Age") ///
     yscale(range(15 37)) ;
-
+# delimit cr
 	
 restore
 

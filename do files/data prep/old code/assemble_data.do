@@ -209,12 +209,16 @@ preserve
 	keep if youngest == 1
 	keep caseid v213 youngest noalive bord b0 b3 b5 b7 b8 m4
 
-	save $nfhs_youngest, replace
+	tempfile nfhs_youngest
+	save `nfhs_youngest'
+// 	save $nfhs_youngest, replace
 
 restore
 
 * merge, drop children without mothers
-merge 1:1 caseid using $nfhs_youngest
+// merge 1:1 caseid using $nfhs_youngest
+
+merge 1:1 caseid using `nfhs_youngest'
 drop if _merge == 2
 gen youngest_status=.
 replace youngest_status = 0 if v213==1 & v218==0 
@@ -275,11 +279,14 @@ preserve
 	by caseid: egen diedpast5yr = max(diedpastfiveyr)
 	collapse diedpast5yr, by(caseid)
 	tab diedpast5yr, m
-	save $nfhs_dead, replace
+// 	save $nfhs_dead, replace
+
+	tempfile nfhs_dead
+	save `nfhs_dead'
 restore
 
 rename _merge merge1
-merge 1:1 caseid using $nfhs_dead
+merge 1:1 caseid using `nfhs_dead'
 drop if _merge == 2 // moms in child death dataset that aren't in individual recode
 gen childdied = diedpast5yr==1
 *0 no child died in past 5 years (including those who never had a child)
@@ -338,11 +345,14 @@ preserve
 	gen dropbin = 1 if counter0==0&counter1>0
 	tab dropbin, m
 	keep bin dropbin
-	save $dropbins, replace
+	
+	tempfile dropbins
+	save `dropbins'
+// 	save $dropbins, replace
 restore
 
 rename _merge merge2
-merge m:1 bin using $dropbins
+merge m:1 bin using `dropbins'
 drop if dropbin==1
 drop dropbin
 
