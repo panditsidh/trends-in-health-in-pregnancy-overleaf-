@@ -13,6 +13,8 @@ use $ir_combined, clear
 
 keep if v213==0
 
+
+
 eststo clear
 foreach r of numlist 3/5 {
 	

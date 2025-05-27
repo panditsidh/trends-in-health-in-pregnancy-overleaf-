@@ -9,6 +9,8 @@ if "`c(username)'" == "sidhpandit" {
 
 use $ir_combined, clear
 
+keep if sterilized==0
+
 gen moperiod_all = .
 replace moperiod_all = 1 if v215>=101 & v215 <= 128 
 replace moperiod_all = 2 if v215>=129 & v215 <= 156 
@@ -28,7 +30,6 @@ replace moperiod_all = 8 if v215==308
 replace moperiod_all = 9 if v215==309 
 replace moperiod_all = 10 if v215==310 
 replace moperiod_all = 11 if v215==311 
-
 
 gen not_pregnant = v213==0
 
@@ -55,7 +56,7 @@ esttab round3 round4 round5,
 	drop(v213 _cons)
 	mtitle("NFHS-3" "NFHS-4" "NFHS-5")
 	nonumbers nostar noobs not	;
-
+#delimit cr
 	
 #delimit ;
 esttab round3 round4 round5 using $out_github, replace 
@@ -63,3 +64,4 @@ esttab round3 round4 round5 using $out_github, replace
 	drop(v213 _cons)
 	mtitle("NFHS-3" "NFHS-4" "NFHS-5")
 	nonumbers nostar noobs not booktabs;
+#delimit cr
