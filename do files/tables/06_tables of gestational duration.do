@@ -88,6 +88,8 @@ esttab model_mopreg3 model_moperiod3 model_mopreg4 model_moperiod4 model_mopreg5
 	mtitles("Mopreg" "Moperiod" "Mopreg" "Moperiod" "Mopreg" "Moperiod")
 	mgroups("NFHS-3 (2005-2006)" "NFHS-4 (2015-2016)" "NFHS-5 (2019-2021)", pattern(1 0 1 0 1 0) )
 	addnotes("Mopreg refers to respondents self reported gestational duration. Moperiod refers months since last menstrual period.");
+	
+#delimit cr
 
 #delimit ;
 esttab model_mopreg3 model_moperiod3 model_mopreg4 model_moperiod4 model_mopreg5 model_moperiod5 using $outtex_github,
@@ -99,8 +101,9 @@ esttab model_mopreg3 model_moperiod3 model_mopreg4 model_moperiod4 model_mopreg5
 	mtitles("Mopreg" "Moperiod" "Mopreg" "Moperiod" "Mopreg" "Moperiod")
 	mgroups("NFHS-3 (2005-2006)" "NFHS-4 (2015-2016)" "NFHS-5 (2019-2021)", pattern(1 0 1 0 1 0) )
 	addnotes("Mopreg refers to respondents self reported gestational duration. Moperiod refers months since last menstrual period.")
-	booktabs
-	;
+	booktabs;
+	
+#delimit cr
 	
 
 	

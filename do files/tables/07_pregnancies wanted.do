@@ -50,7 +50,7 @@ esttab round3 round4 round5,
 	drop(v213 _cons)
 	mtitle("NFHS-3" "NFHS-4" "NFHS-5")
 	nonumbers nostar noobs not	;
-
+#delimit cr
 
 #delimit ;
 esttab round3 round4 round5 using $out_github, 
@@ -59,5 +59,6 @@ esttab round3 round4 round5 using $out_github,
 	drop(v213 _cons)
 	mtitle("NFHS-3" "NFHS-4" "NFHS-5")
 	nonumbers nostar noobs not
-	booktabs
-	;
+	booktabs;
+	
+#delimit cr
