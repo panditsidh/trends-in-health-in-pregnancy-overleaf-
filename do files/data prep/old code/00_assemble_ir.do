@@ -24,9 +24,6 @@ if "`c(username)'" == "dc42724" {
 	
 }
 
-
-
-
 /*
 
 For graphs/tables that don't need reweighting, 
@@ -578,8 +575,6 @@ replace bp_s = (sb16s + sb23s)/2 if sb16s < 300 & sb23s < 300 & round==4
 replace bp_s = (sb16s + sb27s)/2 if sb16s < 300 & sb27s < 300 & round==4
 replace bp_s = (sb27s + sb23s)/2 if sb27s < 300 & sb23s < 300 & round==4
 replace bp_s = (sb16s + sb23s + sb27s)/3 if sb16s < 300 & sb23s < 300 & sb27s < 300 & round==4
-
-twoway (kdensity bp_s if round==4) (kdensity bp_s if round==5), legend(label(1 "NFHS-4" 2 "NFHS-5"))
 
 *I think we should drop the 250 but the others look right, we need to come up with a rule that covers this.
 list bp_s if bp_s > 200 & bp_s!=. & v213==1

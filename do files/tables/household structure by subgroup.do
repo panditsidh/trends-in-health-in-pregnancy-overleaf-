@@ -196,6 +196,13 @@ gen ci_5 = string(mean_5, "%4.1f") + " (" + string(lb_5, "%4.1f") + ", " + strin
 
 keep row ci_3 ci_4 ci_5
 
+gen blank_row = row == ""
+
+gen next_blank = blank_row[_n+1]
+drop if blank_row == 1 & next_blank == 1
+
+drop blank_row next_blank
+
 #delimit ;
 listtex row ci_3 ci_4 ci_5 using $out_tex_ci, replace ///
   rstyle(tabular) ///

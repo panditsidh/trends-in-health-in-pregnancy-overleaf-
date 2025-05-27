@@ -22,7 +22,7 @@ foreach r of numlist 3/5 {
     
     * Create sorted CDF using weights
     cumul bmi if round == `r' & v213==1 [aw=wt], gen(cdf_p`r') 
-	cumul bmi if round == `r' & v213==0 [aw=reweightingfxn], gen(cdf_np`r') 
+	cumul bmi if round == `r' & v213==0 [aw=reweightingfxn_all], gen(cdf_np`r') 
 
     * Merge into main cdf var for plotting
     replace cdf = cdf_p`r' if round == `r' & v213==1

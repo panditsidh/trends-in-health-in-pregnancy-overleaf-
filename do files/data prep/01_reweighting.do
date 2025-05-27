@@ -2,7 +2,7 @@
 
 
 * To test on a single survey round, uncomment these lines and replace file paths
-// use "/Users/sidhpandit/Desktop/nfhs/nfhs3ir/IAIR52FL.dta", clear
+// use caseid s46 v* using "/Users/sidhpandit/Desktop/nfhs/nfhs3ir/IAIR52FL.dta", clear
 // global nfhs_br "/Users/sidhpandit/Desktop/nfhs/nfhs3br/IABR52FL.dta"
 
 
@@ -40,7 +40,6 @@ replace preg=. if mopreg==.
 
 
 * gen using modern method of contraception indicator
-
 gen vcal_1_trim = trim(vcal_1)
 gen done = 0
 gen isnumber = .
@@ -57,7 +56,7 @@ replace modernmethod = 1 if answer>0 & answer <8
 
 * gen sterilized, don't include in reweighting bc no "risk" of pregnancy
 gen sterilized = answer==6 | answer ==7
-
+drop if sterilized==1
 
 * gen education indicators
 gen lessedu= (v106==0| v106==1)
@@ -169,11 +168,12 @@ replace hasboy = 1 if v204 >0 & v204!=.
 
 * gen reweights using all predictors for bins
 
-egen bin_all=group(modernmethod lessedu v013 urban youngest_status noliving childdied hasboy)
+egen bin_all=group(modernmethod lessedu age_10 urban youngest_status noliving childdied hasboy)
 gen counter=1
 
+
 preserve
-	collapse (sum) counter (mean) modernmethod lessedu v013 urban youngest_status noliving childdied hasboy, by(bin_all v213)
+	collapse (sum) counter (mean) modernmethod lessedu age_10 urban youngest_status noliving childdied hasboy, by(bin_all v213)
 	drop if bin_all == .
 	reshape wide counter, i(bin_all) j(v213)
 	replace counter0 = 0 if counter0 == .
@@ -182,7 +182,7 @@ preserve
 // 	list counter1 modernmethod lessedu v013 urban youngest_status noliving childdied hasboy if counter0==0&counter1>0
 // 	list bin counter1 modernmethod lessedu v013 urban youngest_status noliving childdied hasboy if counter0==0&counter1>0
 
-	gen dropbin_all = 1 if counter0==0&counter1>0
+	gen dropbin_all = counter0==0&counter1>0
 // 	tab dropbin_all, m
 	keep bin_all dropbin_all
 	
@@ -192,15 +192,14 @@ restore
 
 merge m:1 bin_all using `dropbins_all', gen(dropbins_all_merge)
 
-egen pregweight_all = sum(v005) if v213 == 1 & dropbin_all==0, by(bin_all)
-egen nonpregweight_all = sum(v005) if v213 == 0 & dropbin_all==0, by(bin_all)
-egen transferpreg_all = mean(pregweight_all) if dropbin_all==0, by(bin_all)
-egen transfernonpreg_all = mean(nonpregweight_all) if dropbin_all==0, by(bin_all)
+egen pregweight_all = sum(v005) if v213 == 1.& dropbin_all!=1, by(bin_all)
+egen nonpregweight_all = sum(v005) if v213 == 0 & dropbin_all!=1, by(bin_all)
+egen transferpreg_all = mean(pregweight_all) if dropbin_all!=1, by(bin_all)
+egen transfernonpreg_all = mean(nonpregweight_all) if dropbin_all!=1, by(bin_all)
 
-gen reweightingfxn_all = v005*transferpreg_all/transfernonpreg_all if dropbin_all==0
+gen reweightingfxn_all = v005*transferpreg_all/transfernonpreg_all if dropbin_all!=1
 
 * gen reweights using single year age as bins
-
 gen bin_age=v012
 
 preserve
@@ -211,7 +210,7 @@ preserve
 	replace counter1 = 0 if counter1 == .
 	count if counter0==0&counter1>0 
 
-	gen dropbin_age = 1 if counter0==0&counter1>0
+	gen dropbin_age = counter0==0&counter1>0
 
 	keep bin_age dropbin_age
 	
@@ -228,4 +227,6 @@ egen nonpregweight_age = sum(v005) if v213 == 0 & dropbin_age==0, by(bin_age)
 egen transferpreg_age = mean(pregweight_age) if dropbin_age==0, by(bin_age)
 egen transfernonpreg_age = mean(nonpregweight_age) if dropbin_age==0, by(bin_age)
 
+
+* 560 missing observations - fewer age bins in which there are no pregnant women 
 gen reweightingfxn_age = v005*transferpreg_age/transfernonpreg_age if dropbin_age==0
