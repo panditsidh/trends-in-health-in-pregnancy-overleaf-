@@ -4,7 +4,7 @@ if "`c(username)'" == "sidhpandit" {
 	
 	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
 	
-	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics3_bord4_plus"
+	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics3_bord4_plus.tex"
 	
 }
 

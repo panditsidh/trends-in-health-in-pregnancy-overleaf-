@@ -38,6 +38,10 @@ foreach r in 3 4 5 {
     matrix mean = m[1,1]'
     matrix lb   = m[5,1]'
     matrix ub   = m[6,1]'
+	matrix mean = 100 * mean
+	matrix lb   = 100 * lb
+	matrix ub   = 100 * ub
+	
     matrix m_ci_`i' = mean , lb , ub
 	matrix colnames m_ci_`i' = Mean_`r' LB_`r' UB_`r'
     local ++i
