@@ -4,7 +4,7 @@ if "`c(username)'" == "sidhpandit" {
 	
 	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
 	
-	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics3_bord3_plus"
+	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics3_bord3_plus.tex"
 	
 }
 
@@ -146,5 +146,5 @@ listtex row ci_3 ci_4 ci_5 using $out_tex, replace ///
 	   "Group & NFHS-3 & NFHS-4 & NFHS-5 \\\\" ///
 	   "\midrule") ///
   foot("\bottomrule" ///
-	   "\end{tabular}"); ///
+	   "\end{tabular}");
 
