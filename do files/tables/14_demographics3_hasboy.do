@@ -32,6 +32,16 @@ foreach r in 3 4 5 {
     keep if round == `r'
 
     local i = 1
+	
+	svy: mean hasboy
+    matrix m = r(table)
+    matrix mean = m[1,1]'
+    matrix lb   = m[5,1]'
+    matrix ub   = m[6,1]'
+    matrix m_ci_`i' = mean , lb , ub
+	matrix colnames m_ci_`i' = Mean_`r' LB_`r' UB_`r'
+    local ++i
+	
     foreach var of local overvars {
 
         svy: mean hasboy, over(`var')
@@ -52,7 +62,8 @@ foreach r in 3 4 5 {
     }
 
     * Stack for this round
-    matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3
+    matrix rownames m_ci_1 = 1.india
+    matrix m_ci_round`r' = m_ci_1 \ m_ci_2 \ m_ci_3 \ m_ci_4
 
     restore
 }
@@ -62,7 +73,7 @@ matrix full_ci = m_ci_round3 , m_ci_round4 , m_ci_round5
 
 * Assign rownames (hardcoded, same for all rounds)
 matrix rownames full_ci = ///
-    Focus Central East West North South Northeast ///
+    India Focus Central East West North South Northeast ///
     Rural Urban ///
     "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
 
@@ -81,8 +92,54 @@ forvalues i = 1/`nrows' {
 esttab matrix(full_ci), replace
     title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
     noobs nonumber label;
+#delimit cr
+
+
+gen row = ""
+input str30 rows
+"India"
+"Focus"
+"Central"
+"East"
+"West"
+"North"
+"South"
+"Northeast"
+"Rural"
+"Urban"
+"Forward Caste"
+"OBC"
+"Dalit"
+"Adivasi"
+"Muslim"
+"Sikh, Jain, Christian"
+end
+
+
+replace row = rows
+drop rows
+
+
+svmat full_ci, names(col)
+
+
+
+gen ci_3 = string(Mean_3, "%4.1f") + " (" + string(LB_3, "%4.1f") + ", " + string(UB_3, "%4.1f") + ")" if !missing(Mean_3)
+gen ci_4 = string(Mean_4, "%4.1f") + " (" + string(LB_4, "%4.1f") + ", " + string(UB_4, "%4.1f") + ")" if !missing(Mean_4)
+gen ci_5 = string(Mean_5, "%4.1f") + " (" + string(LB_5, "%4.1f") + ", " + string(UB_5, "%4.1f") + ")" if !missing(Mean_5)
+
+keep row ci_3 ci_4 ci_5
+
+drop if missing(row)
+
+
 
 #delimit ;
-esttab matrix(full_ci) using $out_tex, replace
-    noobs nonumber label booktabs;
-
+listtex row ci_3 ci_4 ci_5 using $out_tex, replace ///
+  rstyle(tabular) ///
+  head("\begin{tabular}{lccc}" ///
+       "\toprule" ///
+       "Group & NFHS-3 & NFHS-4 & NFHS-5 \\\\" ///
+       "\midrule") ///
+  foot("\bottomrule" ///
+       "\end{tabular}"); ///

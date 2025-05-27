@@ -81,7 +81,7 @@ matrix full_ci = m_ci_round3 , m_ci_round4 , m_ci_round5
 
 * Assign rownames (hardcoded, same for all rounds)
 matrix rownames full_ci = ///
-    Focus Central East West North South Northeast ///
+    India Focus Central East West North South Northeast ///
     Rural Urban ///
     "Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
 
