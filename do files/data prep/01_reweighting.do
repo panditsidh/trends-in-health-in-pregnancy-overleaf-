@@ -56,7 +56,7 @@ replace modernmethod = 1 if answer>0 & answer <8
 
 * gen sterilized, don't include in reweighting bc no "risk" of pregnancy
 gen sterilized = answer==6 | answer ==7
-drop if sterilized==1
+// drop if sterilized==1
 
 * gen education indicators
 gen lessedu= (v106==0| v106==1)
@@ -168,7 +168,7 @@ replace hasboy = 1 if v204 >0 & v204!=.
 
 * gen reweights using all predictors for bins
 
-egen bin_all=group(modernmethod lessedu age_10 urban youngest_status noliving childdied hasboy)
+egen bin_all=group(modernmethod lessedu age_10 urban youngest_status noliving childdied hasboy) if sterilized==0
 gen counter=1
 
 
@@ -192,6 +192,8 @@ restore
 
 merge m:1 bin_all using `dropbins_all', gen(dropbins_all_merge)
 
+replace dropbin_all=1 if sterilized==1
+
 egen pregweight_all = sum(v005) if v213 == 1.& dropbin_all!=1, by(bin_all)
 egen nonpregweight_all = sum(v005) if v213 == 0 & dropbin_all!=1, by(bin_all)
 egen transferpreg_all = mean(pregweight_all) if dropbin_all!=1, by(bin_all)
@@ -200,7 +202,7 @@ egen transfernonpreg_all = mean(nonpregweight_all) if dropbin_all!=1, by(bin_all
 gen reweightingfxn_all = v005*transferpreg_all/transfernonpreg_all if dropbin_all!=1
 
 * gen reweights using single year age as bins
-gen bin_age=v012
+gen bin_age=v012 if sterilized==0
 
 preserve
 	collapse (sum) counter, by(bin_age v213)
@@ -221,6 +223,8 @@ restore
 merge m:1 bin_age using `dropbins_age', gen(dropbins_age_merge)
 // drop if dropbin_age==1
 // drop dropbin_age
+
+replace dropbin_age=1 if sterilized==1
 
 egen pregweight_age = sum(v005) if v213 == 1 & dropbin_age==0, by(bin_age)
 egen nonpregweight_age = sum(v005) if v213 == 0 & dropbin_age==0, by(bin_age)

@@ -45,6 +45,7 @@ twoway
 	text(0.05 48 " - NFHS-3: `preg_3moplus_3'%", placement(west) size(small))
 	text(0.045 48 " - NFHS-4: `preg_3moplus_4'%", placement(west) size(small))
 	text(0.04 48 " - NFHS-5: `preg_3moplus_5'%", placement(west) size(small));
+#delimit cr
 
 graph display, xsize(15) ysize(10) 
 
