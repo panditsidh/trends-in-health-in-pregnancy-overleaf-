@@ -2,8 +2,6 @@ if "`c(username)'" == "sidhpandit" {
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
 	
 	
-	global ihr_pregnant "/Users/sidhpandit/Desktop/ra/ihr345_pregnant.dta"
-	
 	global out_tex "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/tables/demographics1_age.tex"
 
 	
@@ -18,8 +16,6 @@ replace strata = 137 if strata==138
 svyset psu [pw=wt], strata(strata)
 
 svy: mean v012, over(region)
-
-
 
 svy: mean v012, over(v102)
 svy: mean v012, over(group)
@@ -101,11 +97,60 @@ forvalues i = 1/`nrows' {
 esttab matrix(full_ci), replace
     title("Mean v012 with 95 Confidence Intervals by Group and Survey Round")
     noobs nonumber label;
+# delimit cr
+
+// #delimit ;
+// esttab matrix(full_ci) using $out_tex, replace 
+// 	cells("mean(fmt(2))")
+//     noobs nonumber label booktabs;
+// # delimit cr
+
+
+gen row = ""
+input str30 rows
+"India"
+"Focus"
+"Central"
+"East"
+"West"
+"North"
+"South"
+"Northeast"
+"Rural"
+"Urban"
+"Forward Caste"
+"OBC"
+"Dalit"
+"Adivasi"
+"Muslim"
+"Sikh, Jain, Christian"
+end
+
+
+replace row = rows
+drop rows
+
+
+svmat full_ci, names(col)
+
+
+
+gen ci_3 = string(Mean_3, "%4.1f") + " (" + string(LB_3, "%4.1f") + ", " + string(UB_3, "%4.1f") + ")" if !missing(Mean_3)
+gen ci_4 = string(Mean_4, "%4.1f") + " (" + string(LB_4, "%4.1f") + ", " + string(UB_4, "%4.1f") + ")" if !missing(Mean_4)
+gen ci_5 = string(Mean_5, "%4.1f") + " (" + string(LB_5, "%4.1f") + ", " + string(UB_5, "%4.1f") + ")" if !missing(Mean_5)
+
+keep row ci_3 ci_4 ci_5
+
+drop if missing(row)
+
 
 
 #delimit ;
-esttab matrix(full_ci) using $out_tex, replace 
-	cells("mean(fmt(2))")
-    noobs nonumber label booktabs;
-
-	
+listtex row ci_3 ci_4 ci_5 using $out_tex, replace ///
+  rstyle(tabular) ///
+  head("\begin{tabular}{lccc}" ///
+       "\toprule" ///
+       "Group & NFHS-3 & NFHS-4 & NFHS-5 \\\\" ///
+       "\midrule") ///
+  foot("\bottomrule" ///
+       "\end{tabular}"); ///
