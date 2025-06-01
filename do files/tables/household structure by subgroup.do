@@ -99,7 +99,7 @@ esttab matrix(full) using $out_tex, replace
     noobs nonumber label booktabs;
 #delimit cr
 
-	
+
 	
 * Step 1: Create empty 2×9 matrix
 matrix blank2 = J(2, 9, .)

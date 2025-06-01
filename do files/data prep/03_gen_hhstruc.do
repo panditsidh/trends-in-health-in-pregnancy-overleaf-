@@ -6,9 +6,7 @@ if "`c(username)'" == "sidhpandit" {
 	global ir_combined "/Users/sidhpandit/Desktop/ra/ir345_prepregweights.dta"
 	
 	global nfhs3hmr "/Users/sidhpandit/Desktop/nfhs/nfhs3hmr/IAPR52FL.DTA"
-	
 	global nfhs4hmr "/Users/sidhpandit/Desktop/nfhs/nfhs4hmr/IAPR74FL.DTA"
-	
 	global nfhs5hmr "/Users/sidhpandit/Desktop/nfhs/nfhs5hmr/IAPR7EFL.DTA"
 }
 
@@ -19,9 +17,7 @@ if "`c(username)'" == "dc42724" {
 	
 
 	global nfhs3hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS06\hhmr\IAPR52FL.dta"
-	
 	global nfhs4hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\hhmr\IAPR71FL.DTA"
-	
 	global nfhs5hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IAPR7DDT\IAPR7DFL.DTA"
 }
 

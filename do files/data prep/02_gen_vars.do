@@ -329,7 +329,6 @@ replace husband_away6mo = . if husband_away1mo==.
 
 label var husband_away6mo "Husband away for 6+ mo. in last year"
 
-
 *Calculate weights
 egen strata = group(v000 v024 v025) 
 egen psu = group(v000 v001 v024 v025)
