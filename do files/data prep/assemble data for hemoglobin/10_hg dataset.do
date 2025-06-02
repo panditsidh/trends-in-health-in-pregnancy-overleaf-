@@ -1,3 +1,5 @@
+* TODO
+
 
 if "`c(username)'" == "sidhpandit" {
 	
@@ -17,6 +19,7 @@ if "`c(username)'" == "sidhpandit" {
 	
 	global nfhs5cr "/Users/sidhpandit/Desktop/nfhs/nfhs5cr/IAKR7EFL.DTA"
 	
+	global statedistrict "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/do files/data prep/assemble data for hemoglobin/11_statedistrict_match.do"
 }
 
 
@@ -166,18 +169,16 @@ gen timevar_missing = missing(time_minutes)
 
 
 
-// 5. Generate svy variables
+// 5. Generate svy & other variables
 
 egen strata = group(hv000 hv024 hv025) 
 egen psu = group(hv000 hv001 hv024 hv025)
-
-
-
 
 gen sc = sh46==1 if inlist(round,3,5)
 gen st = sh46==2 if inlist(round,3,5)
 gen obc = sh46==3 if inlist(round,3,5)
 gen forward = sh46==4 if inlist(round,3,5)
 
+gen month = hv006
+gen days_since_jan1 = CDCcode - (mdy(1,1,hv007) + 21916)
 
-// 6. 
