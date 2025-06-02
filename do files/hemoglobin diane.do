@@ -1,3 +1,11 @@
+*use the dataset that sidh created in the assemble do file
+
+reg hg round if source== 2 & (round==4 | round==5)
+
+reg hg round NEWVAR##district if source== 2 & (round==4 | round==5)
+
+
+
 *This do file uses the dataset that is referred to by $ir_combined.
 *For Diane, the path to the dataset is "C:\Users\dc42724\Dropbox\K01\trends_health_pregnancy\datasets\ir345_trends_pregnancy.dta"
 
