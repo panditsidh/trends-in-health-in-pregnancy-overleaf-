@@ -13,12 +13,7 @@ gen nfhs4 = round == 4
 gen nfhs5 = round ==5
 gen nfhs3= round ==3
 
-*NFHS 3 and 5 took place more in the summer months
-
-
-
-* 
-
+*NFHS 3 and 5 took place more in the summer months 
 
 
 preserve
@@ -42,10 +37,44 @@ lpoly hemo CDCcode if round==4, noscatter
 
 
 
-
-
 reghdfe hemo nfhs4 nfhs5 CDCcode i.source, absorb(state)
 
-reghdfe hemo nfhs5 CDCcode time_decimal i.source if inlist(round,4,5), absorb(district) cluster(psu)
+
+# delimit ;
+reghdfe hemo 
+	nfhs5 
+	CDCcode 
+	time_decimal 
+	i.source 
+	i.sh46 // type of caste/tribe of hh head
+	i.hv270 // wealth index
+	if inlist(round,4,5), absorb(district) cluster(psu);
+
+	
+preserve
+keep if inlist(round,4,5)
+# delimit ;
+oaxaca hemo
+	hv006 time_decimal 
+	sc st obc, by(nfhs5);
+# delimit cr
+restore
 
 
+# delimit ;
+reghdfe hemo 
+	nfhs5 
+	CDCcode 
+	time_decimal 
+	i.ha54 // pregnant
+	i.sh46 // type of caste/tribe of hh head
+	i.hv270 // wealth index
+	if inlist(round,4,5) & inlist(source,1,2), absorb(district) cluster(psu);
+# delimit cr
+
+	
+	
+	
+	
+	
+	
