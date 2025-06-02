@@ -38,6 +38,7 @@ if "`c(username)'" == "dc42724" {
 	
 }
 
+clear all
 
 use $nfhs3hmr
 append using $nfhs4hmr
