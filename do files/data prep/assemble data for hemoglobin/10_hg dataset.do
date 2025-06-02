@@ -36,6 +36,8 @@ if "`c(username)'" == "dc42724" {
 	global nfhs4hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS15\hhmr\IAPR71FL.DTA"
 	global nfhs5hmr "C:\Users\dc42724\Dropbox\Data\NFHS\NFHS19\IAPR7DDT\IAPR7DFL.DTA"
 	
+	global statedistrict "C:\Users\dc42724\Documents\GitHub\trends-in-health-in-pregnancy-overleaf-\do files\data prep\assemble data for hemoglobin\11_statedistrict_match.do"
+	
 }
 
 
@@ -84,20 +86,22 @@ replace hv016_fixed = 28 if hv006 == 2 & hv016 > 28 // crude Feb fix; safe if no
 
 gen CDCcode = mdy(hv006, hv016_fixed, hv007) + 21916
 
-
-
 // 3. Make sure state is coded the same for all 3 rounds
 *run the 11_statedistrict_match do file
+do "${statedistrict}"
+
 
 //4. Clean the hg measurements
 replace hg=. if hg>900
 replace hg=hg/10
+replace hg=. if hg>20
 
 // 4. Create a time variable (pref use time of 3rd BP reading - hg testing is immediately after)
-gen consent_bp3 = shb25
-replace consent_bp3 = shb23 if hv000=="IA7"
+*gen consent_bp3 = shb25
+*replace consent_bp3 = shb23 if hv000=="IA7"
 
 * in NFHS-5 we have shb28 (hhmm, 24 hour clock)
+
 gen hour_bp3 = floor(shb28 / 100) if hv000=="IA7"
 gen minutes_bp3 = mod(shb28, 100) if hv000=="IA7"
 
@@ -117,8 +121,8 @@ gen time_decimal_bp3 = hour_bp3 + minutes_bp3/60
 
 
 * if missing time of third BP reading, fill in with time of second
-gen consent_bp2 = shb21
-replace consent_bp2 = shb23 if hv000=="IA7"
+*gen consent_bp2 = shb21
+*replace consent_bp2 = shb23 if hv000=="IA7"
 
 gen hour_bp2 = floor(shb24 / 100) if hv000=="IA7"
 gen minutes_bp2 = mod(shb24, 100) if hv000=="IA7"
@@ -148,11 +152,11 @@ gen time_decimal_bp1 = hour_bp1 + minutes_bp1/60
 
 gen time_minutes = time_minutes_bp3 if !missing(time_minutes_bp3)
 gen time_decimal = time_decimal_bp3 if !missing(time_decimal_bp3)
-gen consent = consent_bp3
+*gen consent = consent_bp3
 
 replace time_minutes = time_minutes_bp2 if missing(time_minutes) & !missing(time_minutes_bp2)
 replace time_decimal = time_decimal_bp2 if missing(time_decimal) & !missing(time_decimal_bp2)
-replace consent = consent_bp2 if missing(consent)
+*replace consent = consent_bp2 if missing(consent)
 
 replace time_minutes = time_minutes_bp1 if missing(time_minutes) & !missing(time_minutes_bp1)
 replace time_decimal = time_decimal_bp1 if missing(time_decimal) & !missing(time_decimal_bp1)
@@ -173,3 +177,6 @@ gen sc = sh46==1 if inlist(round,3,5)
 gen st = sh46==2 if inlist(round,3,5)
 gen obc = sh46==3 if inlist(round,3,5)
 gen forward = sh46==4 if inlist(round,3,5)
+
+
+// 6. 
