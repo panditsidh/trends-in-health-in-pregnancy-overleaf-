@@ -1,38 +1,17 @@
+* need to fix export function here
+
+if "`c(username)'" == "sidhpandit" {
+	global path "/Users/sidhpandit/Documents/GitHub/trends-in-health-in-pregnancy-overleaf-/figures/maternal nutrition by social group/"
+	
+}
+
+if "`c(username)'" == "dc42724" {
+	global path "C:\Users\dc42724\Documents\GitHub\trends-in-health-in-pregnancy-overleaf-\figures\maternal nutrition by social group\"
+	
+	
+}
 
 svyset psu [pw=reweightingfxn], strata(strata) singleunit(centered)
-
-gen m =.
-gen ll=.
-gen ul=.
-foreach i of numlist 1/5 {
-	
-	foreach p of numlist 1/4 {
-		
-		svy: mean underweight if groups6==`i' & parity==`p'
-		
-		replace m = r(table)[1,1] if groups6==`i' & parity==`p'
-		replace ll = r(table)[5,1] if groups6==`i' & parity==`p'
-		replace ul = r(table)[6,1] if groups6==`i' & parity==`p'
-	}
-
-}
-
-foreach i of numlist 2/5 {
-
-	twoway ///
-		(rcap ll ul parity if groups6==1, color(blue)) ///
-		(scatter m parity if groups6==1, msymbol(circle) mcolor(blue)) ///
-		(rcap ll ul parity if groups6==`i', color(red)) ///
-		(scatter m parity if groups6==`i', msymbol(square) mcolor(red)), ///
-		xlabel(0 "0" 1 "1" 2 "2" 3 "3" 4 "4+") ///
-		ytitle("Proportion Underweight") ///
-		xtitle("Parity") ///
-		title("Underweight by Parity: `: label grouplbl `i'' vs Forward Caste") ///
-		legend(order(2 "`: label grouplbl 1'" 4 "`: label grouplbl `i''") rows(2)) ///
-		name(fwd_vs_group`i', replace)
-}
-
-
 
 * Define outcome list
 local outcomes underweight bmi
@@ -76,7 +55,9 @@ foreach outcome of local outcomes {
             name(`outcome'_fwd_vs_group`i', replace)
 
         * Export graph as PNG
-        graph export "`outcome'_fwd_vs_group`i'.png", replace width(1200)
+//         graph export "`outcome'_fwd_vs_group`i'.png", replace width(1200)
+		
+		graph export "${path}`outcome'_fwd_vs_group`i'.png", replace width(1200)
     }
 
     * Drop variables to avoid conflict in next loop
