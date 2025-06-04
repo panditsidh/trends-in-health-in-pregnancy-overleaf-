@@ -156,6 +156,21 @@ merge 1:1 caseid using `nfhs_dead'
 drop if _merge == 2
 gen childdied = diedpast5yr==1
 
+* gen outcome variables
+
+gen bmi = v445 if v445!=9998 & v445!= 9999
+replace bmi = bmi/100
+
+gen underweight = bmi<18.5
+
+gen parity = v219 if v219<=3 
+replace parity = 4 if v219>=4 
+replace parity = parity-1 if v213==1
+
+
+* gen svy vars
+egen strata = group(v000 v024 v025) 
+egen psu = group(v000 v001 v024 v025)
 
 * label vars
 label define roundlbl 3 "NFHS-3 (2005-2006)" 4 "NFHS-4 (2015-2016)" 5 "NFHS-5 (2019-2021)"
@@ -173,8 +188,7 @@ label define grouplbl ///
     2 "OBC" ///
     3 "Dalit" ///
     4 "Adivasi" ///
-    5 "Muslim" ///
-    6 "Sikh, Jain, Christian"
+    5 "Muslim" 
 
 label values groups6 groups6lbl
 
@@ -183,8 +197,22 @@ label var obc "OBC"
 label var dalit "Dalit"
 label var adivasi "Adivasi"
 label var muslim "Muslim"
-label var sikh_jain_christian "Sikh, Jain or Christian"
+// label var sikh_jain_christian "Sikh, Jain or Christian"
 label var other_group "Other social group"
+
+
+label define paritylbl ///
+    0 "0" ///
+    1 "1" ///
+    2 "2" ///
+	3 "3" ///
+	4 "4+" ///
+	
+label values parity paritylbl
+
+
+
+
 
 
 

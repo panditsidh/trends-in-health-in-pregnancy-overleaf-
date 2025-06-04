@@ -13,6 +13,10 @@ if "`c(username)'" == "dc42724" {
 
 svyset psu [pw=reweightingfxn], strata(strata) singleunit(centered)
 
+
+capture graph drop _all
+capture drop m ll ul
+
 * Define outcome list
 local outcomes underweight bmi
 
@@ -41,17 +45,38 @@ foreach outcome of local outcomes {
     foreach i of numlist 2/5 {
 
         local groupname : label grouplbl `i'
+		
+		* set marker shapes based on the comparison social group 
+		local shape square_hollow
+		if `i'==3 local shape triangle_hollow
+		if `i'==4 local shape diamond_hollow
+		if `i'==5 local shape circle_hollow
+		
+		* set axis options depending on the outcome
+		local ylabel ""
+		local yscale ""
 
-        twoway ///
-            (rcap ll ul parity if groups6==1, color(blue)) ///
-            (scatter m parity if groups6==1, msymbol(circle) mcolor(blue)) ///
-            (rcap ll ul parity if groups6==`i', color(red)) ///
-            (scatter m parity if groups6==`i', msymbol(square) mcolor(red)), ///
+		if "`outcome'" == "underweight" {
+			local ylabel ylabel(0(0.05)0.3, angle(horizontal))
+			local yscale yscale(range(0 0.3))
+		}
+		else if "`outcome'" == "bmi" {
+			local ylabel ylabel(20(1)26, angle(horizontal))
+			local yscale yscale(range(20 26))
+		}
+		
+        qui twoway ///
+            (rcap ll ul parity if groups6==1, color(gs8)) ///
+            (scatter m parity if groups6==1, msymbol(circle) mcolor(gs8)) ///
+            (rcap ll ul parity if groups6==`i', color(black)) ///
+            (scatter m parity if groups6==`i', msymbol(`shape') mcolor(black)), ///
             xlabel(0 "0" 1 "1" 2 "2" 3 "3" 4 "4+") ///
-            ytitle("Mean `outcome'") ///
-            xtitle("Parity") ///
-            title("`outcome': `groupname' vs Forward Caste") ///
-            legend(order(2 "Forward Caste" 4 "`groupname'") rows(2)) ///
+            ytitle("estimated prevalence of pre-pregnancy `outcome'", size(small)) ///
+            xtitle("number of living children") ///
+            title("`groupname' and Forward Caste") ///
+			`ylabel' ///
+			`yscale' ///
+            legend(order(2 "Forward Caste" 4 "Comparison Social Group") rows(1)) ///
             name(`outcome'_fwd_vs_group`i', replace)
 
         * Export graph as PNG
@@ -63,3 +88,46 @@ foreach outcome of local outcomes {
     * Drop variables to avoid conflict in next loop
     drop m ll ul
 }
+
+
+#delimit ;
+grc1leg underweight_fwd_vs_group2 underweight_fwd_vs_group3 underweight_fwd_vs_group4 underweight_fwd_vs_group5,
+	ycommon;
+
+graph export "${path}prepreg_underweight_combined.png", as(png) replace;
+	
+	
+#delimit ;
+grc1leg bmi_fwd_vs_group2 bmi_fwd_vs_group3 bmi_fwd_vs_group4 bmi_fwd_vs_group5,
+	ycommon;
+
+graph export "${path}prepreg_bmi_combined.png", as(png) replace;
+
+
+#delimit cr
+
+
+* stacked bar graph
+
+gen parity0 = parity==0
+gen parity1 = parity==1
+gen parity2 = parity==2
+gen parity3 = parity==3
+gen parity4_plus = parity==4
+
+label values groups6 groups6lbl
+
+graph bar parity0 parity1 parity2 parity3 parity4_plus, ///
+    over(groups6, label(angle(45))) ///
+    stack ///
+    legend( ///
+        label(1 "0") ///
+        label(2 "1") ///
+        label(3 "2") ///
+        label(4 "3") ///
+        label(5 "4+") ///
+        title("number of living children before pregnancy", size(small)) ///
+        rows(5) ///
+    )
+
+graph export "${path}stackedbar_parity_socialgroup.png", as(png) replace
