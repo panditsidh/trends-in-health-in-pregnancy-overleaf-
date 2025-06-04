@@ -11,11 +11,14 @@ if "`c(username)'" == "dc42724" {
 	
 }
 
+
+ 
+
 svyset psu [pw=reweightingfxn], strata(strata) singleunit(centered)
 
 
 capture graph drop _all
-capture drop m ll ul
+capture drop m ll ul m_*
 
 * Define outcome list
 local outcomes underweight bmi
@@ -29,16 +32,25 @@ foreach outcome of local outcomes {
     gen m = .
     gen ll = .
     gen ul = .
+	
+	gen m_overall_outcome = .
+	gen m_overall_parity = .
 
     * Estimate mean and CI by group and parity
     foreach i of numlist 1/5 {
         foreach p of numlist 0/4 {
-            quietly svy: mean `outcome' if groups6==`i' & parity==`p'
+            quietly svy: mean `outcome' if groups6==`i' & parity==`p' & preg==0
             
             replace m = r(table)[1,1] if groups6==`i' & parity==`p'
             replace ll = r(table)[5,1] if groups6==`i' & parity==`p'
             replace ul = r(table)[6,1] if groups6==`i' & parity==`p'
         }
+		
+		quietly svy: mean `outcome' if groups6==`i' & preg==0
+		replace m_overall_outcome = r(table)[1,1] if groups6==`i' & preg==0
+		
+		quietly svy: mean parity if groups6==`i' & preg==0
+		replace m_overall_parity = r(table)[1,1] if groups6==`i' & preg==0
     }
 
     * Create plots: each non-forward group vs forward caste
@@ -65,9 +77,16 @@ foreach outcome of local outcomes {
 			local yscale yscale(range(20 26))
 		}
 		
+		
+		preserve
+		
+		duplicates drop groups6 m ll ul, force
+		
         qui twoway ///
+			(scatter m_overall_outcome m_overall_parity if groups6==1, msymbol(X) mcolor(gs8)) ///
             (rcap ll ul parity if groups6==1, color(gs8)) ///
             (scatter m parity if groups6==1, msymbol(circle) mcolor(gs8)) ///
+			(scatter m_overall_outcome m_overall_parity if groups6==`i', msymbol(X) mcolor(black)) ///
             (rcap ll ul parity if groups6==`i', color(black)) ///
             (scatter m parity if groups6==`i', msymbol(`shape') mcolor(black)), ///
             xlabel(0 "0" 1 "1" 2 "2" 3 "3" 4 "4+") ///
@@ -76,17 +95,19 @@ foreach outcome of local outcomes {
             title("`groupname' and Forward Caste") ///
 			`ylabel' ///
 			`yscale' ///
-            legend(order(2 "Forward Caste" 4 "Comparison Social Group") rows(1)) ///
+            legend(order(1 "Forward Caste" 4 "Comparison Social Group") rows(1)) ///
             name(`outcome'_fwd_vs_group`i', replace)
-
         * Export graph as PNG
 //         graph export "`outcome'_fwd_vs_group`i'.png", replace width(1200)
 		
 		graph export "${path}`outcome'_fwd_vs_group`i'.png", replace width(1200)
+		
+		restore
+		
     }
 
     * Drop variables to avoid conflict in next loop
-    drop m ll ul
+    drop m ll ul m*
 }
 
 
@@ -115,9 +136,13 @@ gen parity2 = parity==2
 gen parity3 = parity==3
 gen parity4_plus = parity==4
 
-label values groups6 groups6lbl
+label values groups6 groupslbl
 
-graph bar parity0 parity1 parity2 parity3 parity4_plus, ///
+
+
+*** only pregnant women
+
+graph bar parity0 parity1 parity2 parity3 parity4_plus if preg==1, ///
     over(groups6, label(angle(45))) ///
     stack ///
     legend( ///
