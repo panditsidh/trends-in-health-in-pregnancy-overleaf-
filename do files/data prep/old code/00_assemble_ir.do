@@ -585,7 +585,6 @@ list bp_d if bp_d > 200 & bp_d!=. & v213==1
 gen age_in_mo_at_survey = (v008-v011)/12
 
 
-
 *Calculate weights
 egen strata = group(v000 v024 v025) 
 egen psu = group(v000 v001 v024 v025)

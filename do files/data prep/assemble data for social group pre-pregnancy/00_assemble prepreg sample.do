@@ -190,7 +190,7 @@ label define grouplbl ///
     4 "Adivasi" ///
     5 "Muslim" 
 
-label values groups6 groups6lbl
+label values groups6 grouplbl
 
 label var forward "Forward"
 label var obc "OBC"

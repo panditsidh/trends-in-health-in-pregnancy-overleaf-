@@ -90,7 +90,7 @@ foreach outcome of local outcomes {
             (rcap ll ul parity if groups6==`i', color(black)) ///
             (scatter m parity if groups6==`i', msymbol(`shape') mcolor(black)), ///
             xlabel(0 "0" 1 "1" 2 "2" 3 "3" 4 "4+") ///
-            ytitle("estimated prevalence of pre-pregnancy `outcome'", size(small)) ///
+            ytitle("estimated prevalence of pre-pregnancy `outcome'", size(vsmall)) ///
             xtitle("number of living children") ///
             title("`groupname' and Forward Caste") ///
 			`ylabel' ///
@@ -135,8 +135,6 @@ gen parity1 = parity==1
 gen parity2 = parity==2
 gen parity3 = parity==3
 gen parity4_plus = parity==4
-
-label values groups6 groupslbl
 
 
 

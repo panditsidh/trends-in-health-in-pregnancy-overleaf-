@@ -80,7 +80,6 @@ matrix rownames full_ci = ///
 	India Focus Central East West North South Northeast ///
 	Rural Urban ///
 	"Forward Caste" OBC Dalit Adivasi Muslim "Sikh, Jain, Christian"
-
 	
 
 local nrows = rowsof(full_ci)
