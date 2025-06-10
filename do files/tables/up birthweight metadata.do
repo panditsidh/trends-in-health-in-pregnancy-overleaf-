@@ -38,8 +38,8 @@ keep if b2>=v007-3 // births in the last 3 years
 egen strata = group(v000 v024 v025) 
 egen psu = group(v000 v001 v024 v025)
 
-svyset psu [pw=v005], strata(strata) singleunit(centered)
-
+gen wt = v005 / 1000000
+gen ones = 1
 
 * make sure birthweight question is asked for everyone
 
@@ -71,12 +71,14 @@ gen PNM = IMR - NNM
 replace PNM = . if NNM == 1000
 
 
+gen nnm = NNM/1000
+
 * birthweight recorded indicator, among neonatal deaths
 
 gen has_bw_nnm = has_bw if NNM==1000
 
 
-local outcomes has_bw bw_500 has_bw_nnm
+local outcomes has_bw bw_500 has_bw_nnm NNM nnm
 
 local n_outcomes : word count `outcomes'
 
@@ -87,20 +89,46 @@ matrix results = J(`n_districts', 1, .)
 
 foreach outcome in `outcomes' {
 	
-	qui svy: mean `outcome', over(sdist)
+	if "`outcome'" == "nnm" {
+		
+		svyset psu [pw=ones], strata(strata) singleunit(centered)
+        qui svy: total `outcome', over(sdist)
+		
+		matrix mean = r(table)[1,1..`n_districts']'
+		matrix ll = J(`n_districts', 1, .)
+		matrix ul = J(`n_districts', 1, .)
+
+    }
+	
+	else {
+		
+		svyset psu [pw=v005], strata(strata) singleunit(centered)
+		qui svy: mean `outcome', over(sdist)
+		
+		matrix mean = r(table)[1,1..`n_districts']'
+		matrix colnames mean = mean_`outcome'
+		
+		matrix ll = r(table)[5,1..`n_districts']'		
+		matrix ul = r(table)[6,1..`n_districts']'
+		
+	}
+	
+	
 	
 	matrix mean = r(table)[1,1..`n_districts']'
 	matrix colnames mean = mean_`outcome'
 	
-	matrix ll = r(table)[5,1..`n_districts']'
+// 	matrix ll = r(table)[5,1..`n_districts']'
 	matrix colnames ll = ll_`outcome'
 	
-	matrix ul = r(table)[6,1..`n_districts']'
+// 	matrix ul = r(table)[6,1..`n_districts']'
 	matrix colnames ul = ul_`outcome'
 	
 	matrix results = results, mean, ll, ul
 
 }
+
+
 
 
 svmat results, names(col)
@@ -121,9 +149,13 @@ keep mean* ll* ul* district
 
 foreach outcome in `outcomes' {
 	
+	if "`outcome'" != "nnm" {
+	
 	replace mean_`outcome' = mean_`outcome'*100
 	replace ll_`outcome' = ll_`outcome'*100
 	replace ul_`outcome' = ul_`outcome'*100
+	
+	}
 	
 	
 	gen `outcome' = string(mean_`outcome', "%4.1f") + " (" + string(ll_`outcome', "%4.1f") + ", " + string(ul_`outcome', "%4.1f") + ")" if !missing(mean_`outcome')
@@ -138,7 +170,7 @@ listtex district `outcomes' using $out_tex, replace ///
   rstyle(tabular) ///
   head("\begin{tabular}{lccc}" ///
        "\toprule" ///
-       "district & has birthweight record (\%) & birthweight record not 500 (\%) & neonatal deaths with birthweight record (\%) \\\\" ///
+       "district & has bw record (\%) & bw record not 500 (\%) & nnm with bw record (\%) & nnm (weighted, per 1000) & number of nn deaths \\\\" ///
        "\midrule") ///
   foot("\bottomrule" ///
        "\end{tabular}"); ///
